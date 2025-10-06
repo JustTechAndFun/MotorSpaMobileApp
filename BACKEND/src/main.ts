@@ -35,7 +35,6 @@ async function bootstrap() {
     'API Documentation',
   );
   const swaggerVersion = configService.get<string>('SWAGGER_VERSION', '1.0');
-  const swaggerPrefix = configService.get<string>('SWAGGER_PREFIX', 'api-docs');
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle(swaggerTitle)
@@ -44,7 +43,9 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup(swaggerPrefix, app, document, {
+  // Serve Swagger at root (no prefix). Note: This will override any existing GET '/' route.
+  const swaggerPath = '';
+  SwaggerModule.setup(swaggerPath, app, document, {
     swaggerOptions: { persistAuthorization: true },
   });
 
@@ -52,7 +53,7 @@ async function bootstrap() {
   await app.listen(port);
   // Optional: log the URL for convenience
   console.log(`Server running on http://localhost:${port}`);
-  console.log(`Swagger docs available at http://localhost:${port}/${swaggerPrefix}`);
+  console.log(`Swagger docs available at http://localhost:${port}/`);
 }
 bootstrap().catch((err) => {
   console.error('Failed to bootstrap application', err);
