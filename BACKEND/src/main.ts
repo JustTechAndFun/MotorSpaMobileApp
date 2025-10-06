@@ -1,6 +1,9 @@
 import { NestFactory } from '@nestjs/core';
+import { TransformResponseInterceptor } from './common/interceptors/transform-response.interceptor.js';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ApiResponseDto } from './common/dto/api-response.dto.js';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
@@ -28,6 +31,10 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
+  // Global response shaping & error handling
+  app.useGlobalInterceptors(new TransformResponseInterceptor());
+  app.useGlobalFilters(new AllExceptionsFilter());
+
   // Swagger configuration
   const swaggerTitle = configService.get<string>('SWAGGER_TITLE', 'API');
   const swaggerDesc = configService.get<string>(
@@ -42,7 +49,9 @@ async function bootstrap() {
     .setVersion(swaggerVersion)
     .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  const document = SwaggerModule.createDocument(app, swaggerConfig, {
+    extraModels: [ApiResponseDto],
+  });
   // Serve Swagger at root (no prefix). Note: This will override any existing GET '/' route.
   const swaggerPath = '';
   SwaggerModule.setup(swaggerPath, app, document, {
