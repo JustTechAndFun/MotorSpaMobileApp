@@ -4,16 +4,16 @@
 - **Backend**: NestJS (Node.js framework) với PostgreSQL
 - **Frontend**: React Native với Expo
 
-## ✨ Tính năng chính
+## Tính năng chính
 
-- 🔐 **Authentication**: Đăng ký, đăng nhập với JWT
-- 👥 **User Management**: Quản lý người dùng với phân quyền (admin, customer, staff)
-- 🏍️ **Motor Service**: Quản lý dịch vụ bảo dưỡng xe máy
-- 📱 **Cross-platform**: Chạy trên iOS, Android và Web
-- 📚 **API Documentation**: Swagger UI tự động
-- 🔄 **Real-time Updates**: TypeORM với PostgreSQL
+- **Authentication**: Đăng ký, đăng nhập với JWT
+- **User Management**: Quản lý người dùng với phân quyền (admin, customer, staff)
+- **Motor Service**: Quản lý dịch vụ bảo dưỡng xe máy
+- **Cross-platform**: Chạy trên iOS, Android và Web
+- **API Documentation**: Swagger UI tự động
+- **Real-time Updates**: TypeORM với PostgreSQL
 
-## 📋 Yêu cầu hệ thống
+## Yêu cầu hệ thống
 
 - Node.js >= 22.x
 - PostgreSQL >= 12.x
@@ -22,7 +22,7 @@
 - Android Studio (cho Android development)
 - Xcode (cho iOS development - chỉ trên macOS)
 
-## 🚀 Cài đặt và chạy dự án
+## Cài đặt và chạy dự án
 
 ### 1. Cài đặt Node.js 22
 
@@ -73,7 +73,7 @@ npm install
 npx expo start
 ```
 
-## 📱 Chạy ứng dụng Mobile
+## Chạy ứng dụng Mobile
 
 Sau khi chạy `npx expo start`, bạn có thể:
 
@@ -102,7 +102,7 @@ npx expo start --web
 1. Tải app **Expo Go** từ App Store hoặc Google Play
 2. Quét QR code hiển thị trong terminal
 
-## 🛠️ Scripts hữu ích
+## Scripts hữu ích
 
 ### Backend Scripts
 ```bash
@@ -151,7 +151,7 @@ npm run lint
 npm run reset-project
 ```
 
-## 📁 Cấu trúc dự án
+## Cấu trúc dự án
 
 ```
 MotorSpaMobileApp/
@@ -198,7 +198,7 @@ MotorSpaMobileApp/
 └── README.md                       # This file
 ```
 
-## 🔧 Cấu hình môi trường
+## Cấu hình môi trường
 
 ### Backend Environment Variables
 Tạo file `.env` trong folder `BACKEND/`:
@@ -250,7 +250,7 @@ CREATE DATABASE motorspa;
 \q
 ```
 
-## 🚀 Deployment
+## Deployment
 
 ### Backend Deployment
 
@@ -306,7 +306,7 @@ eas build --platform ios --profile production
 - iOS build yêu cầu Apple Developer account ($99/năm)
 - Chi tiết: [Expo EAS Build Documentation](https://docs.expo.dev/build/introduction/)
 
-## 🔐 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /auth/register` - Đăng ký tài khoản
@@ -327,7 +327,7 @@ eas build --platform ios --profile production
 
 **Swagger UI**: `http://localhost:3000/` (khi backend đang chạy)
 
-## 🧪 Testing
+## Testing
 
 ### Backend Tests
 ```bash
@@ -350,23 +350,3 @@ cd FRONTEND
 # Lint
 npm run lint
 ```
-
-## 📚 Tài liệu tham khảo
-
-### Backend
-- [NestJS Documentation](https://docs.nestjs.com)
-- [TypeORM Documentation](https://typeorm.io)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-
-### Frontend
-- [Expo Documentation](https://docs.expo.dev)
-- [React Native Documentation](https://reactnative.dev)
-- [Expo Router](https://docs.expo.dev/router/introduction)
-
-## 🤝 Contributing
-
-Dự án này hiện đang ở chế độ private. Vui lòng liên hệ với team để được cấp quyền truy cập.
-
-## 📝 License
-
-UNLICENSED - Private Project
