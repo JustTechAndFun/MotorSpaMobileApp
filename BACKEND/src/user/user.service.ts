@@ -56,6 +56,50 @@ export class UserService {
     return this.repo.findOne({ where: { phone } });
   }
 
+  async findByEmail(email: string) {
+    return this.repo.findOne({ where: { email } });
+  }
+
+  async findByGoogleId(googleId: string) {
+    return this.repo.findOne({ where: { googleId } });
+  }
+
+  async createOrUpdateGoogleUser(googleProfile: {
+    googleId: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    picture?: string;
+  }) {
+    let user = await this.findByGoogleId(googleProfile.googleId);
+    if (!user && googleProfile.email) {
+      user = await this.findByEmail(googleProfile.email);
+    }
+
+    const fullName = `${googleProfile.firstName || ''} ${googleProfile.lastName || ''}`.trim();
+
+    if (user) {
+      // Update existing user
+      user.googleId = googleProfile.googleId;
+      user.email = googleProfile.email;
+      user.picture = googleProfile.picture || user.picture;
+      if (!user.name || user.name.length === 0) {
+        user.name = fullName;
+      }
+      return await this.repo.save(user);
+    } else {
+      // Create new user
+      const newUser = this.repo.create({
+        googleId: googleProfile.googleId,
+        email: googleProfile.email,
+        name: fullName || 'Google User',
+        picture: googleProfile.picture,
+        role: ROLE.CUSTOMER,
+      });
+      return await this.repo.save(newUser);
+    }
+  }
+
   async update(id: string, dto: UpdateUserDto, requesterRole: ROLE) {
     const user = await this.repo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('User not found');

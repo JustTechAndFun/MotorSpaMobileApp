@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import * as fs from 'fs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -20,6 +21,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
                 autoLoadEntities: true,
                 synchronize: true, // Turn off in production and use migrations.
                 logging: config.get<string>('NODE_ENV') !== 'production',
+                ssl: (() => {
+                    const enabled = config.get<string>('DB_SSL', 'false').toLowerCase() === 'true';
+                    if (!enabled) return false;
+                    const rejectUnauthorized = config.get<string>('DB_SSL_REJECT_UNAUTHORIZED', 'true').toLowerCase() === 'true';
+                    const caPath = config.get<string>('DB_SSL_CA_PATH');
+                    if (caPath) {
+                        try {
+                            const caContent = fs.readFileSync(caPath, { encoding: 'utf8' });
+                            return { rejectUnauthorized, ca: caContent };
+                        } catch {
+                            return { rejectUnauthorized };
+                        }
+                    }
+                    return { rejectUnauthorized };
+                })(),
             }),
         }),
     ],

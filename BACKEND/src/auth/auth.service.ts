@@ -68,6 +68,21 @@ export class AuthService {
         return { success: true };
     }
 
+    async googleLogin(googleProfile: {
+        googleId: string;
+        email: string;
+        firstName: string;
+        lastName: string;
+        picture?: string;
+    }) {
+        const user = await this.users.createOrUpdateGoogleUser(googleProfile);
+        const tokens = await this.generateTokens(user.id, user.role);
+        const refreshHash = await bcrypt.hash(tokens.refreshToken, 10);
+        await this.users.setHashedRefreshToken(user.id, refreshHash);
+        const safe = this.stripSensitive(user);
+        return { user: safe, ...tokens };
+    }
+
     private async generateTokens(sub: string, role: ROLE) {
         const accessSecret = this.config.get<string>('JWT_ACCESS_SECRET');
         const refreshSecret = this.config.get<string>('JWT_REFRESH_SECRET');

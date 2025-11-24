@@ -7,13 +7,13 @@ export class User {
     id: string;
 
     @Index({ unique: true })
-    @Column({ length: 20 })
+    @Column({ length: 20, nullable: true })
     phone: string;
 
     @Column({ length: 100 })
     name: string;
 
-    @Column()
+    @Column({ nullable: true })
     password: string; // hashed password (bcrypt)
 
     @Column({ type: 'enum', enum: ROLE, default: ROLE.CUSTOMER })
@@ -21,6 +21,17 @@ export class User {
 
     @Column({ type: 'text', nullable: true })
     hashedRefreshToken?: string | null;
+
+    // Google OAuth fields
+    @Index({ unique: true })
+    @Column({ length: 255, nullable: true })
+    email?: string | null;
+
+    @Column({ length: 255, nullable: true })
+    googleId?: string | null;
+
+    @Column({ type: 'text', nullable: true })
+    picture?: string | null;
 
     @CreateDateColumn()
     createdAt: Date;
