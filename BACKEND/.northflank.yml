@@ -1,0 +1,44 @@
+# Northflank deployment configuration
+apiVersion: v1
+spec:
+  kind: Workflow
+  name: motor-spa-backend
+  spec:
+    type: service
+    context:
+      image:
+        dockerfile:
+          buildEngine: kaniko
+          dockerFilePath: /Dockerfile
+          dockerWorkDir: /BACKEND
+    spec:
+      billing:
+        deploymentPlan: nf-compute-50
+      deployment:
+        docker:
+          configType: default
+      ports:
+        - name: http
+          internalPort: 3000
+          protocol: HTTP
+          public: true
+      health:
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      resources:
+        limits:
+          memory: 512Mi
+          cpu: 500m
+        requests:
+          memory: 256Mi
+          cpu: 250m
