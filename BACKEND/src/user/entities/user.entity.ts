@@ -6,11 +6,11 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ length: 20, nullable: true, unique: true })
     @Index()
+    @Column({ type: 'varchar', length: 20, nullable: true, unique: true })
     phone: string;
 
-    @Column({ length: 100 })
+    @Column({ type: 'varchar', length: 100 })
     name: string;
 
     @Column({ nullable: true })
@@ -23,11 +23,11 @@ export class User {
     hashedRefreshToken?: string | null;
 
     // Google OAuth fields
-    @Column({ length: 255, nullable: true, unique: true })
     @Index()
+    @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
     email?: string | null;
 
-    @Column({ length: 255, nullable: true })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     googleId?: string | null;
 
     @Column({ type: 'text', nullable: true })
