@@ -7,13 +7,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install all dependencies (including devDependencies for build)
-RUN npm install && npm cache clean --force
+RUN npm install -g @nestjs/cli && npm install && npm cache clean --force
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN npx nest build
+RUN npm run build
 
 # Production stage
 FROM node:20-alpine
