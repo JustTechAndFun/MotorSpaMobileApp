@@ -6,8 +6,8 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Index({ unique: true })
-    @Column({ length: 20, nullable: true })
+    @Column({ length: 20, nullable: true, unique: true })
+    @Index()
     phone: string;
 
     @Column({ length: 100 })
@@ -23,8 +23,8 @@ export class User {
     hashedRefreshToken?: string | null;
 
     // Google OAuth fields
-    @Index({ unique: true })
-    @Column({ length: 255, nullable: true })
+    @Column({ length: 255, nullable: true, unique: true })
+    @Index()
     email?: string | null;
 
     @Column({ length: 255, nullable: true })
