@@ -1,0 +1,7 @@
+# Vercel Ignore File
+# Files and folders to ignore during deployment
+
+README.md
+.git
+.gitignore
+*.md
