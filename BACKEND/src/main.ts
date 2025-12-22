@@ -18,13 +18,25 @@ async function bootstrap() {
     .map((o) => o.trim())
     .filter((o) => !!o);
 
+  console.log('CORS Origins configured:', originList);
+
   app.enableCors({
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      if (!origin || originList.includes(origin)) {
+      // Allow requests with no origin (same-origin, mobile apps, Postman, etc.)
+      if (!origin) {
         callback(null, true);
         return;
       }
-      callback(new Error('Not allowed by CORS'));
+      
+      // Check if origin is in the allowed list
+      if (originList.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      
+      // Log rejected origin for debugging
+      console.warn('CORS rejected origin:', origin);
+      callback(null, false);
     },
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
