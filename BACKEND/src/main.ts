@@ -27,13 +27,13 @@ async function bootstrap() {
         callback(null, true);
         return;
       }
-      
+
       // Check if origin is in the allowed list
       if (originList.includes(origin)) {
         callback(null, true);
         return;
       }
-      
+
       // Log rejected origin for debugging
       console.warn('CORS rejected origin:', origin);
       callback(null, false);

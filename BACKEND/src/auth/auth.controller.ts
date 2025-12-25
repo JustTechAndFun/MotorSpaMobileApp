@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiTags } fr
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { GoogleSignInDto } from './dto/google-signin.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { Request } from 'express';
@@ -43,6 +44,13 @@ export class AuthController {
             lastName: googleUser.lastName,
             picture: googleUser.picture,
         });
+    }
+
+    @Post('google/mobile')
+    @ApiCreatedResponse({ description: 'Authenticate with Google ID Token from mobile app' })
+    @ApiBody({ type: GoogleSignInDto })
+    async googleMobileAuth(@Body() dto: GoogleSignInDto) {
+        return this.auth.verifyGoogleToken(dto.idToken);
     }
 
     @Post('refresh')

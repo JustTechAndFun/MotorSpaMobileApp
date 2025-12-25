@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ROLE } from '../user/enum/role';
 import { JwtPayload } from './strategies/jwt.strategy';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
@@ -81,6 +82,39 @@ export class AuthService {
         await this.users.setHashedRefreshToken(user.id, refreshHash);
         const safe = this.stripSensitive(user);
         return { user: safe, ...tokens };
+    }
+
+    async verifyGoogleToken(idToken: string) {
+        const clientId = this.config.get<string>('GOOGLE_CLIENT_ID');
+        if (!clientId || clientId === 'your_google_client_id_here') {
+            throw new UnauthorizedException('Google authentication is not configured');
+        }
+
+        const client = new OAuth2Client(clientId);
+
+        try {
+            const ticket = await client.verifyIdToken({
+                idToken,
+                audience: clientId,
+            });
+
+            const payload = ticket.getPayload();
+            if (!payload) {
+                throw new UnauthorizedException('Invalid Google token');
+            }
+
+            const googleProfile = {
+                googleId: payload.sub,
+                email: payload.email || '',
+                firstName: payload.given_name || '',
+                lastName: payload.family_name || '',
+                picture: payload.picture,
+            };
+
+            return await this.googleLogin(googleProfile);
+        } catch (error) {
+            throw new UnauthorizedException('Failed to verify Google token: ' + error.message);
+        }
     }
 
     private async generateTokens(sub: string, role: ROLE) {
