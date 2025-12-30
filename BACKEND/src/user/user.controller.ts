@@ -3,6 +3,9 @@ import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags, ApiForbidden
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { CreateUserAddressDto } from './dto/create-user-address.dto';
+import { UpdateUserAddressDto } from './dto/update-user-address.dto';
 import { ROLE } from './enum/role';
 
 // Guards (will be implemented in auth section)
@@ -63,5 +66,59 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
+  }
+
+  @Post('change-password')
+  @ApiOkResponse({ description: 'Change password' })
+  @ApiForbiddenResponse({ description: 'Current password is incorrect or user registered with Google' })
+  @UseGuards(JwtAuthGuard)
+  changePassword(@Body() changePasswordDto: ChangePasswordDto, @Req() req: any) {
+    const userId = req.user.id;
+    return this.userService.changePassword(userId, changePasswordDto.currentPassword, changePasswordDto.newPassword);
+  }
+
+  // User Address endpoints
+  @Post('addresses')
+  @ApiCreatedResponse({ description: 'Address created' })
+  @UseGuards(JwtAuthGuard)
+  createAddress(@Body() createAddressDto: CreateUserAddressDto, @Req() req: any) {
+    const userId = req.user.id;
+    return this.userService.createUserAddress(userId, createAddressDto);
+  }
+
+  @Get('addresses')
+  @ApiOkResponse({ description: 'Get user addresses' })
+  @UseGuards(JwtAuthGuard)
+  getUserAddresses(@Req() req: any) {
+    const userId = req.user.id;
+    return this.userService.getUserAddresses(userId);
+  }
+
+  @Get('addresses/:addressId')
+  @ApiOkResponse({ description: 'Get specific address' })
+  @UseGuards(JwtAuthGuard)
+  getUserAddress(@Param('addressId') addressId: string, @Req() req: any) {
+    const userId = req.user.id;
+    return this.userService.getUserAddress(userId, addressId);
+  }
+
+  @Patch('addresses/:addressId')
+  @ApiOkResponse({ description: 'Update address' })
+  @UseGuards(JwtAuthGuard)
+  updateAddress(
+    @Param('addressId') addressId: string,
+    @Body() updateAddressDto: UpdateUserAddressDto,
+    @Req() req: any
+  ) {
+    const userId = req.user.id;
+    return this.userService.updateUserAddress(userId, addressId, updateAddressDto);
+  }
+
+  @Delete('addresses/:addressId')
+  @ApiOkResponse({ description: 'Delete address' })
+  @UseGuards(JwtAuthGuard)
+  deleteAddress(@Param('addressId') addressId: string, @Req() req: any) {
+    const userId = req.user.id;
+    return this.userService.deleteUserAddress(userId, addressId);
   }
 }

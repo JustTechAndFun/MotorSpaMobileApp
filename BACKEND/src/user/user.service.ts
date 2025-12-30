@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserAddressDto } from './dto/create-user-address.dto';
+import { UpdateUserAddressDto } from './dto/update-user-address.dto';
 import { User } from './entities/user.entity';
+import { UserAddress } from './entities/user-address.entity';
 import { ROLE } from './enum/role';
 import * as bcrypt from 'bcrypt';
 
@@ -11,6 +14,7 @@ import * as bcrypt from 'bcrypt';
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly repo: Repository<User>,
+    @InjectRepository(UserAddress) private readonly addressRepo: Repository<UserAddress>,
   ) { }
 
   async create(dto: CreateUserDto, creatorRole: ROLE) {
@@ -124,6 +128,64 @@ export class UserService {
 
   async setHashedRefreshToken(userId: string, hash: string | null) {
     await this.repo.update(userId, { hashedRefreshToken: hash });
+  }
+
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+    const user = await this.repo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    if (!user.password) throw new ForbiddenException('User registered with Google cannot change password');
+
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordValid) throw new ForbiddenException('Current password is incorrect');
+
+    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+    user.password = newPasswordHash;
+    await this.repo.save(user);
+    return { message: 'Password changed successfully' };
+  }
+
+  // User Address Management
+  async createUserAddress(userId: string, dto: CreateUserAddressDto) {
+    // If setting as default, unset other default addresses
+    if (dto.isDefault) {
+      await this.addressRepo.update({ userId, isDefault: true }, { isDefault: false });
+    }
+
+    const address = this.addressRepo.create({
+      userId,
+      ...dto,
+    });
+    return await this.addressRepo.save(address);
+  }
+
+  async getUserAddresses(userId: string) {
+    return await this.addressRepo.find({ where: { userId } });
+  }
+
+  async getUserAddress(userId: string, addressId: string) {
+    const address = await this.addressRepo.findOne({ where: { id: addressId, userId } });
+    if (!address) throw new NotFoundException('Address not found');
+    return address;
+  }
+
+  async updateUserAddress(userId: string, addressId: string, dto: UpdateUserAddressDto) {
+    const address = await this.addressRepo.findOne({ where: { id: addressId, userId } });
+    if (!address) throw new NotFoundException('Address not found');
+
+    // If setting as default, unset other default addresses
+    if (dto.isDefault) {
+      await this.addressRepo.update({ userId, isDefault: true }, { isDefault: false });
+    }
+
+    Object.assign(address, dto);
+    return await this.addressRepo.save(address);
+  }
+
+  async deleteUserAddress(userId: string, addressId: string) {
+    const address = await this.addressRepo.findOne({ where: { id: addressId, userId } });
+    if (!address) throw new NotFoundException('Address not found');
+    await this.addressRepo.delete(addressId);
+    return { message: 'Address deleted successfully' };
   }
 
   private stripSensitive(user: User) {

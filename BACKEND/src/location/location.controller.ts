@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { LocationService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
@@ -32,6 +32,22 @@ export class LocationController {
     @ApiOkResponse({ description: 'Returns all active locations' })
     findAllActive() {
         return this.locationService.findAllActive();
+    }
+
+    @Get('nearest/find')
+    @ApiOkResponse({ description: 'Find nearest stores based on user location' })
+    @ApiQuery({ name: 'lat', required: true, type: Number, description: 'User latitude' })
+    @ApiQuery({ name: 'lng', required: true, type: Number, description: 'User longitude' })
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of results (default: 5)' })
+    findNearest(
+        @Query('lat') lat: string,
+        @Query('lng') lng: string,
+        @Query('limit') limit?: string
+    ) {
+        const userLat = parseFloat(lat);
+        const userLng = parseFloat(lng);
+        const resultLimit = limit ? parseInt(limit) : 5;
+        return this.locationService.findNearest(userLat, userLng, resultLimit);
     }
 
     @Get(':id')

@@ -1,26 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateMotorServiceDto } from './dto/create-motor_service.dto';
 import { UpdateMotorServiceDto } from './dto/update-motor_service.dto';
+import { MotorService } from './entities/motor_service.entity';
 
 @Injectable()
 export class MotorServiceService {
-  create(createMotorServiceDto: CreateMotorServiceDto) {
-    return 'This action adds a new motorService';
+  constructor(
+    @InjectRepository(MotorService)
+    private readonly repo: Repository<MotorService>,
+  ) { }
+
+  async create(dto: CreateMotorServiceDto): Promise<MotorService> {
+    const service = this.repo.create(dto);
+    return await this.repo.save(service);
   }
 
-  findAll() {
-    return `This action returns all motorService`;
+  async findAll(): Promise<MotorService[]> {
+    return await this.repo.find({
+      relations: ['category'],
+      order: { createdAt: 'DESC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} motorService`;
+  async findAllActive(): Promise<MotorService[]> {
+    return await this.repo.find({
+      where: { isActive: true },
+      relations: ['category'],
+      order: { createdAt: 'DESC' },
+    });
   }
 
-  update(id: number, updateMotorServiceDto: UpdateMotorServiceDto) {
-    return `This action updates a #${id} motorService`;
+  async findOne(id: string): Promise<MotorService> {
+    const service = await this.repo.findOne({
+      where: { id },
+      relations: ['category'],
+    });
+    if (!service) {
+      throw new NotFoundException(`Motor service with ID ${id} not found`);
+    }
+    return service;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} motorService`;
+  async update(id: string, dto: UpdateMotorServiceDto): Promise<MotorService> {
+    const service = await this.findOne(id);
+    Object.assign(service, dto);
+    return await this.repo.save(service);
+  }
+
+  async remove(id: string): Promise<{ success: boolean }> {
+    const service = await this.findOne(id);
+    await this.repo.remove(service);
+    return { success: true };
   }
 }
