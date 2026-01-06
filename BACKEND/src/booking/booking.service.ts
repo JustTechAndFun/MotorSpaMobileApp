@@ -52,7 +52,7 @@ export class BookingService {
                     where: { id: serviceItem.serviceId },
                 });
 
-                let product = null;
+                let product: Product | null = null;
                 let unitPrice = 0;
 
                 if (service) {
