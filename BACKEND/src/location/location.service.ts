@@ -51,7 +51,7 @@ export class LocationService {
     // Find nearest stores based on user location using Haversine formula
     async findNearest(userLat: number, userLng: number, limit: number = 5): Promise<Array<Location & { distance: number }>> {
         const locations = await this.findAllActive();
-        
+
         if (!locations.length) {
             return [];
         }

@@ -8,12 +8,12 @@ import { CartModule } from '../cart/cart.module';
 import { Product } from '../product/entities/product.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Order, OrderItem, Product]),
-    CartModule,
-  ],
-  controllers: [OrderController],
-  providers: [OrderService],
-  exports: [OrderService],
+    imports: [
+        TypeOrmModule.forFeature([Order, OrderItem, Product]),
+        CartModule,
+    ],
+    controllers: [OrderController],
+    providers: [OrderService],
+    exports: [OrderService],
 })
 export class OrderModule { }

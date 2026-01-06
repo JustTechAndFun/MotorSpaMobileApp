@@ -59,6 +59,12 @@ export class BookingController {
         return this.bookingService.findOne(id);
     }
 
+    @Get(':id/with-services')
+    @ApiOkResponse({ description: 'Returns a booking with its services' })
+    findOneWithServices(@Param('id') id: string) {
+        return this.bookingService.findOneWithServices(id);
+    }
+
     @Patch(':id')
     @ApiOkResponse({ description: 'Booking updated successfully' })
     update(

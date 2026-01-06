@@ -46,27 +46,9 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  @ApiOkResponse({ description: 'Get user by id' })
-  @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
-  }
-
-  @Patch(':id')
-  @ApiOkResponse({ description: 'Update user' })
-  @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Req() req: unknown) {
-    const role = this.extractRole(req);
-    return this.userService.update(id, updateUserDto, role);
-  }
-
-  @Delete(':id')
-  @ApiOkResponse({ description: 'Delete user' })
-  @UseGuards(JwtAuthGuard)
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
-  }
+  // ========================================
+  // SPECIFIC ROUTES (must be BEFORE :id routes)
+  // ========================================
 
   @Post('change-password')
   @ApiOkResponse({ description: 'Change password' })
@@ -120,5 +102,31 @@ export class UserController {
   deleteAddress(@Param('addressId') addressId: string, @Req() req: any) {
     const userId = req.user.id;
     return this.userService.deleteUserAddress(userId, addressId);
+  }
+
+  // ========================================
+  // DYNAMIC ROUTES (must be AFTER specific routes)
+  // ========================================
+
+  @Get(':id')
+  @ApiOkResponse({ description: 'Get user by id' })
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(id);
+  }
+
+  @Patch(':id')
+  @ApiOkResponse({ description: 'Update user' })
+  @UseGuards(JwtAuthGuard)
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Req() req: unknown) {
+    const role = this.extractRole(req);
+    return this.userService.update(id, updateUserDto, role);
+  }
+
+  @Delete(':id')
+  @ApiOkResponse({ description: 'Delete user' })
+  @UseGuards(JwtAuthGuard)
+  remove(@Param('id') id: string) {
+    return this.userService.remove(id);
   }
 }

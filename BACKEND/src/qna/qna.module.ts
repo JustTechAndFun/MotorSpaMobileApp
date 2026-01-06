@@ -5,9 +5,9 @@ import { QnaController } from './qna.controller';
 import { QnaMessage } from './entities/qna-message.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([QnaMessage])],
-  controllers: [QnaController],
-  providers: [QnaService],
-  exports: [QnaService],
+    imports: [TypeOrmModule.forFeature([QnaMessage])],
+    controllers: [QnaController],
+    providers: [QnaService],
+    exports: [QnaService],
 })
 export class QnaModule { }

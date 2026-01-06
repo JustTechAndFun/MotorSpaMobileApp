@@ -164,7 +164,7 @@ export class OrderService {
     private async generateOrderNumber(): Promise<string> {
         const date = new Date();
         const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
-        
+
         // Find last order of the day
         const lastOrder = await this.orderRepo
             .createQueryBuilder('order')
