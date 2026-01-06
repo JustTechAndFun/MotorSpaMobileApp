@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags, ApiQuery, ApiOperation, ApiNotFoundResponse } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -17,15 +17,23 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(ROLE.ADMIN)
+    @ApiOperation({ 
+        summary: 'Tạo product mới (Admin only)',
+        description: 'Tạo sản phẩm/dịch vụ mới. Chỉ admin có quyền tạo.'
+    })
     @ApiCreatedResponse({ description: 'Product created successfully' })
     create(@Body() createProductDto: CreateProductDto) {
         return this.productService.create(createProductDto);
     }
 
     @Get()
+    @ApiOperation({ 
+        summary: 'Lấy danh sách products',
+        description: 'Trả về tất cả products. Hỗ trợ filter theo category hoặc subcategory.'
+    })
     @ApiOkResponse({ description: 'Returns all products with categories' })
-    @ApiQuery({ name: 'categoryId', required: false, type: String })
-    @ApiQuery({ name: 'subCategoryId', required: false, type: String })
+    @ApiQuery({ name: 'categoryId', required: false, type: String, description: 'Filter by category' })
+    @ApiQuery({ name: 'subCategoryId', required: false, type: String, description: 'Filter by subcategory' })
     findAll(
         @Query('categoryId') categoryId?: string,
         @Query('subCategoryId') subCategoryId?: string,
@@ -40,13 +48,22 @@ export class ProductController {
     }
 
     @Get('available')
+    @ApiOperation({ 
+        summary: 'Lấy products còn hàng',
+        description: 'Trả về chỉ các products còn available (isAvailable = true).'
+    })
     @ApiOkResponse({ description: 'Returns all available products' })
     findAllAvailable() {
         return this.productService.findAllAvailable();
     }
 
     @Get(':id')
+    @ApiOperation({ 
+        summary: 'Lấy thông tin product theo ID',
+        description: 'Trả về chi tiết product bao gồm category, giá, stock, v.v.'
+    })
     @ApiOkResponse({ description: 'Returns a product by id' })
+    @ApiNotFoundResponse({ description: 'Product not found' })
     findOne(@Param('id') id: string) {
         return this.productService.findOne(id);
     }
@@ -55,7 +72,12 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(ROLE.ADMIN)
+    @ApiOperation({ 
+        summary: 'Cập nhật product (Admin only)',
+        description: 'Cập nhật thông tin product như giá, stock, availability.'
+    })
     @ApiOkResponse({ description: 'Product updated successfully' })
+    @ApiNotFoundResponse({ description: 'Product not found' })
     update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
         return this.productService.update(id, updateProductDto);
     }
@@ -64,7 +86,12 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(ROLE.ADMIN)
+    @ApiOperation({ 
+        summary: 'Xóa product (Admin only)',
+        description: 'Xóa product khỏi hệ thống.'
+    })
     @ApiOkResponse({ description: 'Product deleted successfully' })
+    @ApiNotFoundResponse({ description: 'Product not found' })
     remove(@Param('id') id: string) {
         return this.productService.remove(id);
     }
