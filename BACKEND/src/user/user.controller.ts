@@ -30,7 +30,7 @@ export class UserController {
   }
 
   @Post()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Tạo user mới (Admin only)',
     description: 'Chỉ admin có thể tạo user. Admin có thể tạo admin/employee, còn role khác chỉ tạo được customer.'
   })
@@ -44,7 +44,7 @@ export class UserController {
   }
 
   @Get()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Lấy danh sách tất cả users',
     description: 'Trả về danh sách tất cả users trong hệ thống.'
   })
@@ -59,7 +59,7 @@ export class UserController {
   // ========================================
 
   @Post('change-password')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Đổi mật khẩu',
     description: 'User đổi mật khẩu của chính mình. Yêu cầu nhập mật khẩu cũ để xác thực. Không áp dụng cho tài khoản Google.'
   })
@@ -73,7 +73,7 @@ export class UserController {
 
   // User Address endpoints
   @Post('addresses')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Thêm địa chỉ mới',
     description: 'Khách hàng thêm địa chỉ giao hàng/địa chỉ liên hệ mới vào tài khoản.'
   })
@@ -85,7 +85,7 @@ export class UserController {
   }
 
   @Get('addresses')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Lấy danh sách địa chỉ của user',
     description: 'Trả về tất cả địa chỉ đã lưu của khách hàng hiện tại.'
   })
@@ -97,7 +97,7 @@ export class UserController {
   }
 
   @Get('addresses/:addressId')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Lấy thông tin một địa chỉ cụ thể',
     description: 'Trả về chi tiết của một địa chỉ theo ID.'
   })
@@ -110,7 +110,7 @@ export class UserController {
   }
 
   @Patch('addresses/:addressId')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Cập nhật địa chỉ',
     description: 'Khách hàng cập nhật thông tin địa chỉ của mình.'
   })
@@ -127,7 +127,7 @@ export class UserController {
   }
 
   @Delete('addresses/:addressId')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Xóa địa chỉ',
     description: 'Khách hàng xóa địa chỉ khỏi danh sách của mình.'
   })
@@ -144,7 +144,7 @@ export class UserController {
   // ========================================
 
   @Get(':id')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Lấy thông tin user theo ID',
     description: 'Trả về thông tin chi tiết của một user.'
   })
@@ -156,7 +156,7 @@ export class UserController {
   }
 
   @Patch(':id')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Cập nhật thông tin user',
     description: 'User có thể update thông tin của chính mình. Admin có thể update bất kỳ user nào.'
   })
@@ -169,7 +169,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Xóa user',
     description: 'Xóa user khỏi hệ thống. Thường dành cho admin.'
   })

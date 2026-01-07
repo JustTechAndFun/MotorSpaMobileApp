@@ -17,7 +17,7 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(ROLE.ADMIN)
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Tạo product mới (Admin only)',
         description: 'Tạo sản phẩm/dịch vụ mới. Chỉ admin có quyền tạo.'
     })
@@ -27,7 +27,7 @@ export class ProductController {
     }
 
     @Get()
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Lấy danh sách products',
         description: 'Trả về tất cả products. Hỗ trợ filter theo category hoặc subcategory.'
     })
@@ -48,7 +48,7 @@ export class ProductController {
     }
 
     @Get('available')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Lấy products còn hàng',
         description: 'Trả về chỉ các products còn available (isAvailable = true).'
     })
@@ -58,7 +58,7 @@ export class ProductController {
     }
 
     @Get(':id')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Lấy thông tin product theo ID',
         description: 'Trả về chi tiết product bao gồm category, giá, stock, v.v.'
     })
@@ -72,7 +72,7 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(ROLE.ADMIN)
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Cập nhật product (Admin only)',
         description: 'Cập nhật thông tin product như giá, stock, availability.'
     })
@@ -86,7 +86,7 @@ export class ProductController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(ROLE.ADMIN)
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Xóa product (Admin only)',
         description: 'Xóa product khỏi hệ thống.'
     })

@@ -17,7 +17,7 @@ export class MotorServiceController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(ROLE.ADMIN, ROLE.EMPLOYEE)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Tạo motor service mới (Admin/Employee)',
     description: 'Tạo dịch vụ xe máy mới như thay dầu, vệ sinh, sửa chữa, v.v. Chỉ admin và employee có quyền.'
   })
@@ -27,7 +27,7 @@ export class MotorServiceController {
   }
 
   @Get()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Lấy danh sách tất cả motor services',
     description: 'Trả về tất cả dịch vụ xe máy (bao gồm cả inactive). Public endpoint.'
   })
@@ -37,7 +37,7 @@ export class MotorServiceController {
   }
 
   @Get('active')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Lấy danh sách motor services đang hoạt động',
     description: 'Trả về chỉ các dịch vụ còn active. Dùng để hiển thị cho khách hàng khi đặt lịch.'
   })
@@ -47,7 +47,7 @@ export class MotorServiceController {
   }
 
   @Get(':id')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Lấy thông tin motor service theo ID',
     description: 'Trả về chi tiết của một dịch vụ bao gồm giá, mô tả, loại xe, thời gian ước tính.'
   })
@@ -61,7 +61,7 @@ export class MotorServiceController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(ROLE.ADMIN, ROLE.EMPLOYEE)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Cập nhật motor service (Admin/Employee)',
     description: 'Cập nhật thông tin dịch vụ như giá, mô tả, trạng thái active.'
   })
@@ -75,7 +75,7 @@ export class MotorServiceController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(ROLE.ADMIN)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Xóa motor service (Admin only)',
     description: 'Xóa dịch vụ khỏi hệ thống. Chỉ admin có quyền.'
   })

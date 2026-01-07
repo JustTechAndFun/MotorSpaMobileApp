@@ -14,7 +14,7 @@ export class AuthController {
     constructor(private readonly auth: AuthService) { }
 
     @Post('register')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Đăng ký tài khoản mới',
         description: 'Tạo tài khoản mới với email và password. Trả về access token và refresh token sau khi đăng ký thành công.'
     })
@@ -25,7 +25,7 @@ export class AuthController {
     }
 
     @Post('login')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Đăng nhập',
         description: 'Đăng nhập bằng email và password. Trả về access token và refresh token.'
     })
@@ -37,7 +37,7 @@ export class AuthController {
 
     @Get('google')
     @UseGuards(GoogleAuthGuard)
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Đăng nhập Google (Web)',
         description: 'Redirect đến trang đăng nhập Google OAuth. Dành cho web browser.'
     })
@@ -48,7 +48,7 @@ export class AuthController {
 
     @Get('google/callback')
     @UseGuards(GoogleAuthGuard)
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Google OAuth callback',
         description: 'Endpoint nhận callback từ Google sau khi user đăng nhập thành công. Tạo/update user và trả về tokens.'
     })
@@ -65,7 +65,7 @@ export class AuthController {
     }
 
     @Post('google/mobile')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Đăng nhập Google (Mobile)',
         description: 'Xác thực Google ID Token từ mobile app (React Native, Flutter). Client gửi idToken sau khi đăng nhập với Google SDK.'
     })
@@ -77,7 +77,7 @@ export class AuthController {
     }
 
     @Post('refresh')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Làm mới access token',
         description: 'Sử dụng refresh token để lấy access token và refresh token mới khi access token hết hạn.'
     })
@@ -90,7 +90,7 @@ export class AuthController {
 
     @Post('logout')
     @ApiBearerAuth()
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Đăng xuất',
         description: 'Đăng xuất và vô hiệu hóa refresh token của user.'
     })

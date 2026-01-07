@@ -18,7 +18,7 @@ export class BookingController {
     constructor(private readonly bookingService: BookingService) { }
 
     @Post()
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Tạo booking mới với dịch vụ',
         description: 'Khách hàng tạo booking và chọn các motor services cần sử dụng. Hệ thống tự động tính tổng tiền dựa trên các dịch vụ được chọn.'
     })
@@ -35,7 +35,7 @@ export class BookingController {
     @Get()
     @UseGuards(RolesGuard)
     @Roles(ROLE.ADMIN, ROLE.EMPLOYEE)
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Lấy danh sách tất cả bookings (Admin/Employee)',
         description: 'Hỗ trợ filter theo location hoặc status. Chỉ admin và employee có quyền truy cập.'
     })
@@ -56,7 +56,7 @@ export class BookingController {
     }
 
     @Get('my-bookings')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Lấy danh sách bookings của khách hàng hiện tại',
         description: 'Trả về tất cả bookings mà user đã tạo, sắp xếp theo ngày đặt mới nhất.'
     })
@@ -67,7 +67,7 @@ export class BookingController {
     }
 
     @Get(':id')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Lấy thông tin booking theo ID',
         description: 'Trả về thông tin chi tiết của một booking bao gồm user và location.'
     })
@@ -78,7 +78,7 @@ export class BookingController {
     }
 
     @Get(':id/with-services')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Lấy booking kèm chi tiết các dịch vụ',
         description: 'Trả về booking với danh sách đầy đủ các motor services đã chọn, bao gồm giá và số lượng.'
     })
@@ -89,7 +89,7 @@ export class BookingController {
     }
 
     @Patch(':id')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Cập nhật booking',
         description: 'Khách hàng chỉ có thể update booking của mình. Admin/Employee có thể update payment details.'
     })
@@ -106,7 +106,7 @@ export class BookingController {
     }
 
     @Delete(':id')
-    @ApiOperation({ 
+    @ApiOperation({
         summary: 'Xóa booking',
         description: 'Khách hàng chỉ có thể xóa booking của mình. Admin có thể xóa bất kỳ booking nào.'
     })
