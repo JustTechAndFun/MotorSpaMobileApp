@@ -10,6 +10,26 @@ import 'react-native-reanimated';
 import '../config/ui-lib.config';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://a9ca3430e9196eee56a39730be8db326@o4510674834751489.ingest.de.sentry.io/4510674836848720',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 const mapboxToken = Constants.expoConfig?.extra?.mapboxAccessToken;
 if (mapboxToken) {
@@ -24,7 +44,7 @@ if (__DEV__) {
   ]);
 }
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
@@ -65,4 +85,4 @@ export default function RootLayout() {
       </ThemeProvider>
     </ToastProvider>
   );
-}
+});

@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "Sentry": {
+      "url": "https://mcp.sentry.dev/mcp/bach-khoa-university-96/react-native",
+      "type": "http"
+    }
+  }
+}
