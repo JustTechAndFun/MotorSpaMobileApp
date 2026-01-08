@@ -19,10 +19,8 @@ module.exports = {
     android: {
       package: "com.motorspa.app",
       adaptiveIcon: {
-        backgroundColor: "#E6F4FE",
-        foregroundImage: "./assets/images/logo.png",
-        backgroundImage: "./assets/images/logo.png",
-        monochromeImage: "./assets/images/logo.png"
+        backgroundColor: "#FFFFFF",
+        foregroundImage: "./assets/images/logo.png"
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,

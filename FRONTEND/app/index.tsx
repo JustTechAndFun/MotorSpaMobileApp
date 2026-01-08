@@ -40,13 +40,13 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('@/assets/images/Splash Screen.png')}
+        source={require('@/assets/images/logo.png')}
         style={styles.splashImage}
-        resizeMode="cover"
+        resizeMode="contain"
       />
       <ActivityIndicator 
         size="large" 
-        color="#007AFF" 
+        color="#82b440" 
         style={styles.loader}
       />
     </View>
