@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View, Colors, Card } from 'react-native-ui-lib';
 
 export default function SettingPaymentPage() {
@@ -79,6 +80,7 @@ export default function SettingPaymentPage() {
   };
 
   const openAddModal = () => {
+    console.log('openAddModal called');
     resetForm();
     setEditingMethod(null);
     setModalVisible(true);
@@ -111,7 +113,10 @@ export default function SettingPaymentPage() {
   };
 
   const handleSave = async () => {
-    if (!formName.trim()) {
+    // Auto set name for COD
+    const finalName = formType === 'COD' ? 'Cash on Delivery' : formName.trim();
+    
+    if (!finalName) {
       toast.show({
         type: 'error',
         text1: 'Error',
@@ -124,8 +129,8 @@ export default function SettingPaymentPage() {
     try {
       const data: CreatePaymentMethodRequest = {
         type: formType,
-        name: formName.trim(),
-        isDefault: formIsDefault,
+        name: finalName,
+        isDefault: formType === 'COD' ? false : formIsDefault,
       };
 
       if (formType === 'CREDIT_CARD' || formType === 'DEBIT_CARD') {
@@ -289,21 +294,22 @@ export default function SettingPaymentPage() {
   }
 
   return (
-    <View flex bg-grey80>
-      <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="dark-content" />
+    <>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View flex bg-grey80>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar barStyle="dark-content" />
 
-      {/* Modern Header */}
-      <View
-        row
-        centerV
-        paddingH-20
-        paddingT-15
-        paddingB-18
-        bg-white
-        style={{
-          borderBottomWidth: 1.5,
-          borderBottomColor: Colors.grey70,
+        {/* Modern Header */}
+        <View
+          row
+          centerV
+          paddingH-20
+          paddingV-16
+          bg-white
+          style={{
+            borderBottomWidth: 1.5,
+            borderBottomColor: Colors.grey70,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.05,
@@ -518,6 +524,8 @@ export default function SettingPaymentPage() {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+    </View>
+    </SafeAreaView>
 
       {/* Add/Edit Modal */}
       <Modal
@@ -580,23 +588,27 @@ export default function SettingPaymentPage() {
                 {renderTypeButton('COD', 'Cash on Delivery')}
               </View>
 
-              {/* Name */}
-              <Text text70 textColor marginB-10 style={{ fontWeight: 'bold' }}>Name *</Text>
-              <TextInput
-                style={{
-                  backgroundColor: Colors.grey80,
-                  borderRadius: 14,
-                  paddingHorizontal: 16,
-                  paddingVertical: 14,
-                  fontSize: 15,
-                  color: Colors.textColor,
-                  marginBottom: 20
-                }}
-                value={formName}
-                onChangeText={setFormName}
-                placeholder="e.g., My Visa Card"
-                placeholderTextColor={Colors.grey40}
-              />
+              {/* Name - Hide for COD */}
+              {formType !== 'COD' && (
+                <>
+                  <Text text70 textColor marginB-10 style={{ fontWeight: 'bold' }}>Name *</Text>
+                  <TextInput
+                    style={{
+                      backgroundColor: Colors.grey80,
+                      borderRadius: 14,
+                      paddingHorizontal: 16,
+                      paddingVertical: 14,
+                      fontSize: 15,
+                      color: Colors.textColor,
+                      marginBottom: 20
+                    }}
+                    value={formName}
+                    onChangeText={setFormName}
+                    placeholder="e.g., My Visa Card"
+                    placeholderTextColor={Colors.grey40}
+                  />
+                </>
+              )}
 
               {/* Credit/Debit Card Fields */}
               {(formType === 'CREDIT_CARD' || formType === 'DEBIT_CARD') && (
@@ -690,31 +702,55 @@ export default function SettingPaymentPage() {
                 </>
               )}
 
-              {/* Set as Default */}
-              <TouchableOpacity
-                style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 30 }}
-                onPress={() => setFormIsDefault(!formIsDefault)}
-              >
-                <View
-                  width={28}
-                  height={28}
-                  center
-                  br100
-                  marginR-12
-                  style={{
-                    borderWidth: 2,
-                    borderColor: formIsDefault ? Colors.primaryColor : Colors.grey40,
-                    backgroundColor: formIsDefault ? Colors.primaryColor : 'transparent'
-                  }}
+              {/* Set as Default - Hide for COD */}
+              {formType !== 'COD' && (
+                <TouchableOpacity
+                  style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 30 }}
+                  onPress={() => setFormIsDefault(!formIsDefault)}
                 >
-                  {formIsDefault && (
-                    <Ionicons name="checkmark" size={18} color="white" />
-                  )}
+                  <View
+                    width={28}
+                    height={28}
+                    center
+                    br100
+                    marginR-12
+                    style={{
+                      borderWidth: 2,
+                      borderColor: formIsDefault ? Colors.primaryColor : Colors.grey40,
+                      backgroundColor: formIsDefault ? Colors.primaryColor : 'transparent'
+                    }}
+                  >
+                    {formIsDefault && (
+                      <Ionicons name="checkmark" size={18} color="white" />
+                    )}
+                  </View>
+                  <Text text70 textColor style={{ fontWeight: '600' }}>
+                    Set as default payment method
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              {/* Add special note for COD */}
+              {formType === 'COD' && (
+                <View style={{
+                  backgroundColor: '#fff9e6',
+                  padding: 16,
+                  borderRadius: 12,
+                  marginBottom: 20,
+                  borderLeftWidth: 4,
+                  borderLeftColor: '#ffc107'
+                }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <Ionicons name="information-circle" size={20} color="#ff9500" />
+                    <Text text70 style={{ fontWeight: 'bold', color: '#ff9500', marginLeft: 8 }}>
+                      Cash on Delivery
+                    </Text>
+                  </View>
+                  <Text text80 style={{ color: Colors.grey30, lineHeight: 20 }}>
+                    Pay with cash when your order is delivered. No additional information needed.
+                  </Text>
                 </View>
-                <Text text70 textColor style={{ fontWeight: '600' }}>
-                  Set as default payment method
-                </Text>
-              </TouchableOpacity>
+              )}
 
               {/* Save Button */}
               <TouchableOpacity
@@ -830,6 +866,6 @@ export default function SettingPaymentPage() {
           </View>
         </View>
       </Modal>
-    </View>
+    </>
   );
 }

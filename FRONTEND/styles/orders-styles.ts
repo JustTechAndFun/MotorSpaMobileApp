@@ -83,21 +83,27 @@ export const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    flexWrap: 'wrap',
   },
   orderHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
+    flexWrap: 'nowrap',
   },
   orderHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
+    minWidth: 0,
   },
   orderId: {
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
+    flexWrap: 'wrap',
+    flexShrink: 1,
     marginLeft: 8,
   },
   statusBadge: {

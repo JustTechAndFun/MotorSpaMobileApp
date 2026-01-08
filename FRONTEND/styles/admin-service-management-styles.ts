@@ -14,7 +14,6 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
-    paddingTop: 48,
   },
   backButton: {
     padding: 8,
@@ -51,22 +50,27 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    flexWrap: 'nowrap',
+    alignItems: 'flex-start',
   },
   serviceImage: {
     width: 80,
     height: 80,
     borderRadius: 8,
     backgroundColor: '#F0F0F0',
+    flexShrink: 0,
   },
   serviceInfo: {
     flex: 1,
     marginLeft: 12,
+    minWidth: 0,
   },
   serviceHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 4,
+    flexWrap: 'nowrap',
   },
   serviceName: {
     flex: 1,
@@ -74,12 +78,15 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#333',
     marginRight: 8,
+    flexWrap: 'wrap',
+    flexShrink: 1,
   },
   serviceShortDesc: {
     fontSize: 12,
     color: '#666',
     marginBottom: 8,
     lineHeight: 16,
+    flexWrap: 'wrap',
   },
   serviceDetails: {
     flexDirection: 'row',

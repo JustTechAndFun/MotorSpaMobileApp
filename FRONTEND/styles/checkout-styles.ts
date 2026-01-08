@@ -71,23 +71,28 @@ export const styles = StyleSheet.create({
   productRow: {
     flexDirection: 'row',
     marginTop: 8,
+    flexWrap: 'nowrap',
   },
   productImage: {
     width: 80,
     height: 80,
     borderRadius: 8,
     backgroundColor: '#F5F5F5',
+    flexShrink: 0,
   },
   productInfo: {
     flex: 1,
     marginLeft: 12,
     justifyContent: 'center',
+    minWidth: 0,
   },
   productName: {
     fontSize: 15,
     fontWeight: '600',
     color: '#333',
     marginBottom: 8,
+    flexWrap: 'wrap',
+    flexShrink: 1,
   },
   productDetails: {
     flexDirection: 'row',

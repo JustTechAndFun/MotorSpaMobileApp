@@ -10,6 +10,7 @@ import {
   ScrollView,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View, Colors } from 'react-native-ui-lib';
 
 export default function ChangePasswordScreen() {
@@ -71,17 +72,17 @@ export default function ChangePasswordScreen() {
   };
 
   return (
-    <View flex bg-grey80>
-      <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View flex bg-grey80>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar barStyle="dark-content" />
 
-      {/* Modern Header */}
-      <View
-        row
-        centerV
-        paddingH-20
-        paddingT-15
-        paddingB-18
+        {/* Modern Header */}
+        <View
+          row
+          centerV
+          paddingH-20
+          paddingV-16
         bg-white
         style={{
           borderBottomWidth: 1.5,
@@ -271,5 +272,6 @@ export default function ChangePasswordScreen() {
         </TouchableOpacity>
       </ScrollView>
     </View>
+    </SafeAreaView>
   );
 }

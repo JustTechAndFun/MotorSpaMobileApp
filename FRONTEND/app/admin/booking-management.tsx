@@ -7,9 +7,10 @@ import {
     FlatList,
     Modal,
     RefreshControl,
+    TextInput,
     TouchableOpacity,
 } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View } from 'react-native-ui-lib';
 import { bookingService } from '../../services';
 import { Booking, BookingListParams, BookingStatus } from '../../types/api.types';
@@ -236,7 +237,8 @@ export default function BookingManagementScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -375,6 +377,7 @@ export default function BookingManagementScreen() {
         </View>
       </Modal>
     </View>
+    </SafeAreaView>
   );
 }
 
@@ -396,7 +399,6 @@ const styles = {
     backgroundColor: '#FFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
-    paddingTop: 48,
   },
   backButton: {
     padding: 4,

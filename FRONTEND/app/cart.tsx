@@ -413,26 +413,26 @@ export default function CartScreen() {
             style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey70 }}
           >
             <TouchableOpacity
-              row
-              centerV
               onPress={toggleSelectAll}
             >
-              <View
-                width={28}
-                height={28}
-                center
-                br100
-                style={{
-                  backgroundColor: selectedItems.size === cartItems.length ? Colors.primaryColor : Colors.white,
-                  borderWidth: 2,
-                  borderColor: selectedItems.size === cartItems.length ? Colors.primaryColor : Colors.grey50
-                }}
-              >
-                {selectedItems.size === cartItems.length && (
-                  <Ionicons name="checkmark" size={18} color={Colors.white} />
-                )}
+              <View row centerV>
+                <View
+                  width={28}
+                  height={28}
+                  center
+                  br100
+                  style={{
+                    backgroundColor: selectedItems.size === cartItems.length ? Colors.primaryColor : Colors.white,
+                    borderWidth: 2,
+                    borderColor: selectedItems.size === cartItems.length ? Colors.primaryColor : Colors.grey50
+                  }}
+                >
+                  {selectedItems.size === cartItems.length && (
+                    <Ionicons name="checkmark" size={18} color={Colors.white} />
+                  )}
+                </View>
+                <Text text70 textColor marginL-12 style={{ fontWeight: '600' }}>Select All</Text>
               </View>
-              <Text text70 textColor marginL-12 style={{ fontWeight: '600' }}>Select All</Text>
             </TouchableOpacity>
 
             <Text text80 primaryColor style={{ fontWeight: '700' }}>
@@ -504,7 +504,8 @@ export default function CartScreen() {
               shadowOpacity: 0.12,
               shadowRadius: 15,
               elevation: 12,
-              paddingBottom: 28
+              paddingBottom: 28,
+              marginBottom: 75
             }}
           >
             <View row spread centerV marginB-18>

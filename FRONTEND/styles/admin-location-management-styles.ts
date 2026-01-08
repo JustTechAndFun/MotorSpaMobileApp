@@ -13,7 +13,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    paddingTop: 48,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -40,12 +39,15 @@ export const styles = StyleSheet.create({
   // Statistics
   statsContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     padding: 16,
     backgroundColor: '#fff',
     marginBottom: 8,
+    gap: 12,
   },
   statCard: {
     flex: 1,
+    minWidth: 100,
     alignItems: 'center',
     paddingVertical: 12,
   },
@@ -216,7 +218,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    paddingTop: 48,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
@@ -297,5 +298,48 @@ export const styles = StyleSheet.create({
   },
   switchThumbActive: {
     alignSelf: 'flex-end',
+  },
+
+  // Map Button
+  mapButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#82b440',
+    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    gap: 8,
+  },
+  mapButtonText: {
+    fontSize: 15,
+    color: '#fff',
+    fontWeight: '600',
+  },
+
+  // Selected Location
+  selectedLocationContainer: {
+    backgroundColor: '#E8F5E9',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#82b440',
+  },
+  selectedLocationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+    gap: 6,
+  },
+  selectedLocationTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#82b440',
+  },
+  selectedCoordText: {
+    fontSize: 13,
+    color: '#333',
   },
 });

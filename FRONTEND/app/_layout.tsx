@@ -42,6 +42,8 @@ export default function RootLayout() {
           <Stack.Screen name="cart" options={{ headerShown: false }} />
           <Stack.Screen name="checkout" options={{ headerShown: false }} />
           <Stack.Screen name="booking" options={{ headerShown: false }} />
+          <Stack.Screen name="booking-detail" options={{ headerShown: false }} />
+          <Stack.Screen name="my-bookings" options={{ headerShown: false }} />
           <Stack.Screen name="favorite" options={{ headerShown: false }} />
           <Stack.Screen name="setting-location" options={{ headerShown: false }} />
           <Stack.Screen name="setting-payment" options={{ headerShown: false }} />
@@ -50,7 +52,13 @@ export default function RootLayout() {
           <Stack.Screen name="help" options={{ headerShown: false }} />
           <Stack.Screen name="orders" options={{ headerShown: false }} />
           <Stack.Screen name="order-detail" options={{ headerShown: false }} />
+          <Stack.Screen name="admin/location-management" options={{ headerShown: false }} />
+          <Stack.Screen name="admin/booking-management" options={{ headerShown: false }} />
+          <Stack.Screen name="admin/category-management" options={{ headerShown: false }} />
           <Stack.Screen name="admin/order-management" options={{ headerShown: false }} />
+          <Stack.Screen name="admin/product-management" options={{ headerShown: false }} />
+          <Stack.Screen name="admin/qna-management" options={{ headerShown: false }} />
+          <Stack.Screen name="admin/service-management" options={{ headerShown: false }} />
           <Stack.Screen name="admin/user-management" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />

@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View, Colors, Card } from 'react-native-ui-lib';
 
 export default function AdminUserManagementScreen() {
@@ -243,18 +244,18 @@ export default function AdminUserManagementScreen() {
   }
 
   return (
-    <View flex bg-grey80>
-      <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.grey80 }} edges={['top']}>
+      <View flex bg-grey80>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar barStyle="dark-content" />
 
-      {/* Modern Header */}
-      <View
-        row
-        centerV
-        paddingH-16
-        paddingT-5
-        paddingB-14
-        bg-white
+        {/* Modern Header */}
+        <View
+          row
+          centerV
+          paddingH-16
+          paddingB-14
+          bg-white
         style={{
           borderBottomWidth: 1.5,
           borderBottomColor: Colors.grey70,
@@ -589,31 +590,33 @@ export default function AdminUserManagementScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
-
-              {/* Create Button */}
-              <TouchableOpacity
-                onPress={confirmCreateUser}
-                activeOpacity={0.7}
-                style={{
-                  paddingVertical: 16,
-                  borderRadius: 16,
-                  backgroundColor: Colors.primaryColor,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  shadowColor: Colors.primaryColor,
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 8,
-                  elevation: 6,
-                  marginBottom: 20
-                }}
-              >
-                <Text text70 white style={{ fontWeight: 'bold' }}>Create User</Text>
-              </TouchableOpacity>
             </View>
+
+            {/* Create Button */}
+            <TouchableOpacity
+              onPress={confirmCreateUser}
+              activeOpacity={0.7}
+              style={{
+                paddingVertical: 16,
+                borderRadius: 16,
+                backgroundColor: Colors.primaryColor,
+                alignItems: 'center',
+                justifyContent: 'center',
+                shadowColor: Colors.primaryColor,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 6,
+                marginTop: 8,
+                marginBottom: 20
+              }}
+            >
+              <Text text70 white style={{ fontWeight: 'bold' }}>Create User</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }

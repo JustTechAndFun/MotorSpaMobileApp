@@ -15,10 +15,11 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
+    flexWrap: 'nowrap',
   },
-  avatar: { width: 56, height: 56, borderRadius: 28 },
-  userHandle: { color: '#666', marginBottom: 4 },
-  userName: { fontWeight: '700', fontSize: 16 },
+  avatar: { width: 56, height: 56, borderRadius: 28, flexShrink: 0 },
+  userHandle: { color: '#666', marginBottom: 4, flexWrap: 'wrap' },
+  userName: { fontWeight: '700', fontSize: 16, flexWrap: 'wrap' },
   linkBtn: { marginTop: 8 },
   linkText: { color: '#6aa84f' },
 
@@ -80,8 +81,9 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 24,
-    width: '80%',
+    width: '85%',
     maxWidth: 400,
+    marginHorizontal: 16,
     ...Platform.select({
       ios: {
         shadowColor: '#000',

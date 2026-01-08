@@ -16,7 +16,6 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
-    paddingTop: 48,
   },
   backButton: {
     padding: 8,
@@ -33,6 +32,7 @@ export const styles = StyleSheet.create({
   // Stats
   statsContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     padding: 16,
     backgroundColor: '#FFF',
     marginTop: 8,
@@ -40,6 +40,7 @@ export const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
+    minWidth: 100,
     backgroundColor: '#F8F9FA',
     padding: 16,
     borderRadius: 12,
@@ -89,6 +90,8 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 2,
+    flexWrap: 'nowrap',
+    alignItems: 'center',
   },
   userAvatar: {
     width: 56,
@@ -98,6 +101,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    flexShrink: 0,
   },
   userAvatarText: {
     fontSize: 24,
@@ -107,22 +111,26 @@ export const styles = StyleSheet.create({
   userInfo: {
     flex: 1,
     justifyContent: 'center',
+    minWidth: 0,
   },
   userName: {
     fontSize: 16,
     fontWeight: '600',
     color: '#000',
     marginBottom: 4,
+    flexWrap: 'wrap',
   },
   userPhone: {
     fontSize: 14,
     color: '#666',
     marginBottom: 2,
+    flexWrap: 'wrap',
   },
   userEmail: {
     fontSize: 13,
     color: '#999',
     marginBottom: 6,
+    flexWrap: 'wrap',
   },
   userRoleBadge: {
     alignSelf: 'flex-start',
@@ -142,11 +150,14 @@ export const styles = StyleSheet.create({
   userActions: {
     justifyContent: 'center',
     gap: 8,
+    flexShrink: 0,
   },
   banButton: {
     padding: 10,
     borderRadius: 8,
     backgroundColor: '#FFEBEE',
+    minWidth: 44,
+    minHeight: 44,
   },
   
   // Modal
@@ -160,13 +171,14 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderRadius: 12,
     padding: 24,
-    width: '80%',
+    width: '85%',
     maxWidth: 400,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    marginHorizontal: 16,
   },
   modalTitle: {
     fontSize: 20,
@@ -185,12 +197,14 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 12,
+    flexWrap: 'nowrap',
   },
   modalButton: {
     flex: 1,
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
+    minWidth: 100,
   },
   cancelButton: {
     backgroundColor: '#F0F0F0',
@@ -210,6 +224,7 @@ export const styles = StyleSheet.create({
   createModalContent: {
     width: '90%',
     maxWidth: 500,
+    marginHorizontal: 16,
   },
   inputGroup: {
     marginBottom: 16,
@@ -219,6 +234,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
     marginBottom: 8,
+    flexWrap: 'wrap',
   },
   input: {
     borderWidth: 1,
@@ -227,6 +243,7 @@ export const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     backgroundColor: '#F9F9F9',
+    minHeight: 44,
   },
   roleSelector: {
     flexDirection: 'row',

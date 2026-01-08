@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { bookingService } from '../services';
 import { BookingStatus, BookingWithServices } from '../types/api.types';
 
@@ -122,7 +123,7 @@ export default function BookingDetailScreen() {
   const bookingDate = new Date(booking.bookingDate);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -261,7 +262,7 @@ export default function BookingDetailScreen() {
 
         <View style={{ height: 40 }} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

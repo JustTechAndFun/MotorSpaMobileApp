@@ -14,7 +14,6 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
-    paddingTop: 48,
   },
   backButton: {
     padding: 8,
@@ -55,6 +54,7 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    flexWrap: 'nowrap',
   },
   expandButton: {
     width: 32,
@@ -62,6 +62,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 4,
+    flexShrink: 0,
   },
   categoryIcon: {
     width: 50,
@@ -69,16 +70,21 @@ export const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: '#F0F8FF',
     justifyContent: 'center',
-    alignItems: 'center',    marginRight: 4,  },
+    alignItems: 'center',
+    marginRight: 4,
+    flexShrink: 0,
+  },
   categoryInfo: {
     flex: 1,
     marginLeft: 12,
+    minWidth: 0,
   },
   categoryHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 4,
+    flexWrap: 'nowrap',
   },
   categoryName: {
     flex: 1,
@@ -86,12 +92,15 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#333',
     marginRight: 8,
+    flexWrap: 'wrap',
+    flexShrink: 1,
   },
   categoryDescription: {
     fontSize: 12,
     color: '#666',
     marginBottom: 8,
     lineHeight: 16,
+    flexWrap: 'wrap',
   },
   categoryDetails: {
     flexDirection: 'row',

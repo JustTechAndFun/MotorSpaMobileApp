@@ -243,8 +243,13 @@ export default function ProfileScreen() {
             <>
               <Text text80 grey40 marginB-16 marginT-25 marginL-5 style={{ letterSpacing: 1.2, fontWeight: '700' }}>ADMINISTRATION</Text>
               {renderMenuItem('people-outline', 'User Management', () => router.push('/admin/user-management'))}
+              {renderMenuItem('apps-outline', 'Category Management', () => router.push('/admin/category-management'))}
               {renderMenuItem('cube-outline', 'Product Management', () => router.push('/admin/product-management'))}
               {renderMenuItem('construct-outline', 'Service Management', () => router.push('/admin/service-management'))}
+              {renderMenuItem('location-outline', 'Location Management', () => router.push('/admin/location-management'))}
+              {renderMenuItem('receipt-outline', 'Order Management', () => router.push('/admin/order-management'))}
+              {renderMenuItem('calendar-outline', 'Booking Management', () => router.push('/admin/booking-management'))}
+              {renderMenuItem('chatbubble-outline', 'Q&A Management', () => router.push('/admin/qna-management'))}
             </>
           )}
 
@@ -407,7 +412,8 @@ function EditProfile({ onBack, user, onSave, isSaving }: {
   };
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5EC' }} edges={['top']}>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={onBack} style={styles.backBtn}>
           <FontAwesome5 name="arrow-left" size={18} color="#333" />
@@ -534,5 +540,6 @@ function EditProfile({ onBack, user, onSave, isSaving }: {
 
       <View style={{ height: 24 }} />
     </ScrollView>
+    </SafeAreaView>
   );
 }

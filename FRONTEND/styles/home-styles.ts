@@ -15,6 +15,7 @@ export const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 10,
+    minHeight: '100%',
   },
   row: {
     width: '100%',
@@ -43,10 +44,12 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    gap: 8,
   },
   productCardWrapper: {
     width: '48%',
     marginBottom: 16,
+    minWidth: 150,
   },
   loadingContainer: {
     paddingVertical: 40,

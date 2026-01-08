@@ -37,6 +37,7 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#e0e0e0',
     overflow: 'hidden',
+    flexShrink: 0,
   },
   serviceCardActive: {
     borderColor: '#007AFF',
@@ -55,6 +56,7 @@ export const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#333',
     marginBottom: 4,
+    flexWrap: 'wrap',
   },
   serviceNameActive: {
     color: '#007AFF',

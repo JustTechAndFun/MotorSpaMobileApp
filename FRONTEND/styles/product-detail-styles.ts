@@ -65,10 +65,10 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.03,
     elevation: 2,
   },
-  price: { color: '#6aa84f', fontWeight: '700', marginBottom: 6, fontSize: 14 },
-  titleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
-  title: { fontSize: 15, fontWeight: '700' },
-  store: { color: '#666', marginTop: 4, fontSize: 12 },
+  price: { color: '#6aa84f', fontWeight: '700', marginBottom: 6, fontSize: 14, flexWrap: 'wrap' },
+  titleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap' },
+  title: { fontSize: 15, fontWeight: '700', flexWrap: 'wrap', flex: 1 },
+  store: { color: '#666', marginTop: 4, fontSize: 12, flexWrap: 'wrap' },
   heart: { fontSize: 20, marginLeft: 8 },
 
   infoBox: {

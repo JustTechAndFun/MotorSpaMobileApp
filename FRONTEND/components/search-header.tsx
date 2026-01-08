@@ -1,10 +1,54 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextInput, TouchableOpacity } from 'react-native';
 import { View, Text, Colors, Spacings, Badge } from 'react-native-ui-lib';
 import { styles } from '../styles/search-header-styles';
+import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
+import { cartService } from '@/services';
 
-export default function SearchHeader() {
+interface SearchHeaderProps {
+  onSearch?: (query: string) => void;
+  onClear?: () => void;
+}
+
+export default function SearchHeader({ onSearch, onClear }: SearchHeaderProps) {
+  const router = useRouter();
+  const [searchText, setSearchText] = useState('');
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    loadCartCount();
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadCartCount();
+    }, [])
+  );
+
+  const loadCartCount = async () => {
+    try {
+      const cartItems = await cartService.getCart();
+      setCartCount(cartItems.length);
+    } catch (error) {
+      console.error('Error loading cart count:', error);
+    }
+  };
+
+  const handleSearch = () => {
+    if (searchText.trim() && onSearch) {
+      onSearch(searchText);
+    }
+  };
+
+  const handleClear = () => {
+    setSearchText('');
+    if (onClear) {
+      onClear();
+    }
+  };
+
   return (
     <View
       row
@@ -49,54 +93,47 @@ export default function SearchHeader() {
           }}
           placeholder="Search products & services..."
           placeholderTextColor={Colors.grey40}
+          value={searchText}
+          onChangeText={(text) => {
+            setSearchText(text);
+            if (text.trim() && onSearch) {
+              onSearch(text);
+            } else if (!text.trim() && onClear) {
+              onClear();
+            }
+          }}
+          onSubmitEditing={handleSearch}
+          returnKeyType="search"
         />
+        {searchText.length > 0 && (
+          <TouchableOpacity onPress={handleClear} style={{ padding: 4 }}>
+            <Ionicons name="close-circle" size={20} color={Colors.grey40} />
+          </TouchableOpacity>
+        )}
       </View>
 
-      {/* Action Icons */}
-      <View row centerV>
-        <TouchableOpacity
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 12,
-            backgroundColor: Colors.grey80,
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginRight: 10,
-            position: 'relative'
-          }}
-        >
-          <Ionicons name="notifications-outline" size={24} color={Colors.grey10} />
-          <View
-            absT
-            absR
-            width={10}
-            height={10}
-            br100
-            bg-red30
-            style={{ top: 6, right: 6 }}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 12,
-            backgroundColor: Colors.primaryColor,
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'relative',
-            elevation: 4,
-            shadowColor: Colors.primaryColor,
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.3,
-            shadowRadius: 6,
-          }}
-        >
-          <Ionicons name="cart-outline" size={24} color={Colors.white} />
+      {/* Cart Icon */}
+      <TouchableOpacity
+        onPress={() => router.push('/cart')}
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: 12,
+          backgroundColor: Colors.primaryColor,
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'relative',
+          elevation: 4,
+          shadowColor: Colors.primaryColor,
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.3,
+          shadowRadius: 6,
+        }}
+      >
+        <Ionicons name="cart-outline" size={24} color={Colors.white} />
+        {cartCount > 0 && (
           <Badge
-            label="2"
+            label={cartCount.toString()}
             size={18}
             backgroundColor={Colors.red30}
             containerStyle={{
@@ -109,8 +146,8 @@ export default function SearchHeader() {
             }}
             labelStyle={{ fontSize: 11, fontWeight: 'bold' }}
           />
-        </TouchableOpacity>
-      </View>
+        )}
+      </TouchableOpacity>
     </View>
   );
 }

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Card, Colors, Text, View } from 'react-native-ui-lib';
 import { bookingService } from '../services';
 import { Booking, BookingStatus } from '../types/api.types';
@@ -183,21 +184,21 @@ export default function MyBookingsScreen() {
   }
 
   return (
-    <View flex bg-grey80>
-      <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View flex bg-grey80>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar barStyle="dark-content" />
 
-      {/* Modern Header */}
-      <View
-        row
-        centerV
-        paddingH-20
-        paddingT-15
-        paddingB-18
-        bg-white
-        style={{
-          borderBottomWidth: 1.5,
-          borderBottomColor: Colors.grey70,
+        {/* Modern Header */}
+        <View
+          row
+          centerV
+          paddingH-20
+          paddingV-18
+          bg-white
+          style={{
+            borderBottomWidth: 1.5,
+            borderBottomColor: Colors.grey70,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.05,
@@ -288,7 +289,8 @@ export default function MyBookingsScreen() {
           </View>
         }
       />
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
 

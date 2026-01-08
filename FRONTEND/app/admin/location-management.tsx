@@ -1,3 +1,4 @@
+import MapPicker from '@/components/map-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -9,6 +10,7 @@ import {
     RefreshControl,
     ScrollView, TextInput, TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View } from 'react-native-ui-lib';
 import { locationService } from '../../services';
 import { styles } from '../../styles/admin-location-management-styles';
@@ -24,12 +26,13 @@ export default function LocationManagementScreen() {
   
   // Modal states
   const [modalVisible, setModalVisible] = useState(false);
+  const [mapVisible, setMapVisible] = useState(false);
   const [editingLocation, setEditingLocation] = useState<StoreLocation | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     address: '',
-    latitude: '',
-    longitude: '',
+    latitude: null as number | null,
+    longitude: null as number | null,
     phone: '',
     description: '',
     isActive: true,
@@ -63,8 +66,8 @@ export default function LocationManagementScreen() {
     setFormData({
       name: '',
       address: '',
-      latitude: '',
-      longitude: '',
+      latitude: null,
+      longitude: null,
       phone: '',
       description: '',
       isActive: true,
@@ -77,8 +80,8 @@ export default function LocationManagementScreen() {
     setFormData({
       name: location.name,
       address: location.address,
-      latitude: location.latitude,
-      longitude: location.longitude,
+      latitude: parseFloat(location.latitude),
+      longitude: parseFloat(location.longitude),
       phone: location.phone,
       description: location.description || '',
       isActive: location.isActive,
@@ -124,12 +127,9 @@ export default function LocationManagementScreen() {
       return;
     }
 
-    const lat = parseFloat(formData.latitude);
-    const lng = parseFloat(formData.longitude);
-    if (isNaN(lat) || isNaN(lng)) {
-      Alert.alert('Lỗi', 'Tọa độ không hợp lệ');
-      return;
-    }
+    // Set latitude and longitude to 0 if not selected from map
+    const lat = formData.latitude !== null ? formData.latitude : 0;
+    const lng = formData.longitude !== null ? formData.longitude : 0;
 
     try {
       const data = {
@@ -247,7 +247,8 @@ export default function LocationManagementScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -317,8 +318,9 @@ export default function LocationManagementScreen() {
         transparent={false}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top']}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
               <Ionicons name="close" size={28} color="#333" />
             </TouchableOpacity>
@@ -353,29 +355,29 @@ export default function LocationManagementScreen() {
               />
             </View>
 
-            <View style={styles.formRow}>
-              <View style={[styles.formGroup, { flex: 1, marginRight: 8 }]}>
-                <Text style={styles.label}>Vĩ độ (Latitude) *</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="10.7769"
-                  value={formData.latitude}
-                  onChangeText={(text) => setFormData({ ...formData, latitude: text })}
-                  keyboardType="numeric"
-                />
-              </View>
+            {/* Select on Map Button */}
+            <TouchableOpacity 
+              style={styles.mapButton}
+              onPress={() => setMapVisible(true)}
+            >
+              <Ionicons name="map" size={20} color="#fff" />
+              <Text style={styles.mapButtonText}>
+                {formData.latitude && formData.longitude ? 'Thay đổi vị trí trên bản đồ' : 'Chọn vị trí trên bản đồ'}
+              </Text>
+            </TouchableOpacity>
 
-              <View style={[styles.formGroup, { flex: 1, marginLeft: 8 }]}>
-                <Text style={styles.label}>Kinh độ (Longitude) *</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="106.7009"
-                  value={formData.longitude}
-                  onChangeText={(text) => setFormData({ ...formData, longitude: text })}
-                  keyboardType="numeric"
-                />
+            {/* Selected Location Display */}
+            {formData.latitude !== null && formData.longitude !== null && (
+              <View style={styles.selectedLocationContainer}>
+                <View style={styles.selectedLocationHeader}>
+                  <Ionicons name="checkmark-circle" size={20} color="#82b440" />
+                  <Text style={styles.selectedLocationTitle}>Vị trí đã chọn</Text>
+                </View>
+                <Text style={styles.coordText}>
+                  📍 Kinh độ: {formData.longitude.toFixed(6)}, Vĩ độ: {formData.latitude.toFixed(6)}
+                </Text>
               </View>
-            </View>
+            )}
 
             <View style={styles.formGroup}>
               <Text style={styles.label}>Số điện thoại *</Text>
@@ -430,7 +432,33 @@ export default function LocationManagementScreen() {
             <View style={{ height: 40 }} />
           </ScrollView>
         </View>
+        </SafeAreaView>
       </Modal>
+
+      {/* Map Picker Modal */}
+      <MapPicker
+        visible={mapVisible}
+        onClose={() => setMapVisible(false)}
+        onSelectLocation={(location) => {
+          setFormData({
+            ...formData,
+            address: location.address || formData.address,
+            latitude: location.latitude,
+            longitude: location.longitude,
+          });
+          setMapVisible(false);
+        }}
+        initialLocation={
+          formData.latitude !== null && formData.longitude !== null
+            ? {
+                latitude: formData.latitude,
+                longitude: formData.longitude,
+                address: formData.address,
+              }
+            : undefined
+        }
+      />
     </View>
+    </SafeAreaView>
   );
 }

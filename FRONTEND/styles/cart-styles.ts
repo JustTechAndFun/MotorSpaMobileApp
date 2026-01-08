@@ -73,31 +73,38 @@ export const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
     alignItems: 'flex-start',
+    flexWrap: 'nowrap',
   },
   checkbox: {
     marginRight: 12,
     paddingTop: 4,
+    flexShrink: 0,
   },
   productImage: {
     width: 80,
     height: 80,
     borderRadius: 8,
     backgroundColor: '#E5E5E5',
+    flexShrink: 0,
   },
   productInfo: {
     flex: 1,
     marginLeft: 12,
+    minWidth: 0,
   },
   productName: {
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
     marginBottom: 4,
+    flexWrap: 'wrap',
+    flexShrink: 1,
   },
   productPrice: {
     fontSize: 14,
     color: '#666',
     marginBottom: 8,
+    flexWrap: 'wrap',
   },
   quantityContainer: {
     flexDirection: 'row',
@@ -107,6 +114,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     alignSelf: 'flex-start',
+    flexShrink: 0,
   },
   quantityButton: {
     width: 28,
@@ -115,6 +123,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
     justifyContent: 'center',
     alignItems: 'center',
+    flexShrink: 0,
   },
   quantityButtonDisabled: {
     backgroundColor: '#F5F5F5',
@@ -131,12 +140,16 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     marginLeft: 8,
+    flexShrink: 0,
+    minWidth: 60,
   },
   totalPrice: {
     fontSize: 16,
     fontWeight: '700',
     color: '#333',
     marginBottom: 8,
+    flexWrap: 'wrap',
+    textAlign: 'right',
   },
   removeButton: {
     padding: 4,

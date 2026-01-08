@@ -14,6 +14,8 @@ import type { Product } from '../types/api.types';
 export default function Home() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(6);
@@ -48,7 +50,27 @@ export default function Home() {
     }, 300);
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim()) {
+      const filtered = allProducts.filter(product =>
+        product.name.toLowerCase().includes(query.toLowerCase()) ||
+        product.description?.toLowerCase().includes(query.toLowerCase())
+      );
+      setSearchResults(filtered);
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setSearchResults([]);
+  };
+
   const hasMore = currentIndex < allProducts.length;
+  const isSearching = searchQuery.trim().length > 0;
+  const productsToShow = isSearching ? searchResults : displayedProducts;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,16 +82,16 @@ export default function Home() {
         >
           <Banner />
 
-          <SearchHeader />
+          <SearchHeader onSearch={handleSearch} onClear={handleClearSearch} />
 
-          <Category />
+          {!isSearching && <Category />}
 
           <View style={styles.productsSection}>
             {/* Modern Section Header */}
             <View row spread centerV marginB-20 paddingH-5>
               <View>
                 <Text text50 textColor style={{ fontWeight: 'bold', letterSpacing: 0.3 }}>
-                  All Products
+                  {isSearching ? 'Search Results' : 'All Products'}
                 </Text>
                 <View
                   width={50}
@@ -79,7 +101,7 @@ export default function Home() {
                   style={{ borderRadius: 2 }}
                 />
               </View>
-              {!loading && allProducts.length > 0 && (
+              {!loading && (isSearching ? searchResults.length > 0 : allProducts.length > 0) && (
                 <View
                   paddingH-12
                   paddingV-6
@@ -87,7 +109,7 @@ export default function Home() {
                   style={{ backgroundColor: Colors.grey80 }}
                 >
                   <Text text80 grey20 style={{ fontWeight: '700' }}>
-                    {allProducts.length} items
+                    {isSearching ? searchResults.length : allProducts.length} items
                   </Text>
                 </View>
               )}
@@ -100,17 +122,26 @@ export default function Home() {
                   Loading products...
                 </Text>
               </View>
+            ) : isSearching && searchResults.length === 0 ? (
+              <View style={styles.loadingContainer}>
+                <Text text60 grey40 center style={{ fontWeight: '600' }}>
+                  No products found
+                </Text>
+                <Text text80 grey50 center marginT-10>
+                  Try searching with different keywords
+                </Text>
+              </View>
             ) : (
               <>
                 <View style={styles.productsGrid}>
-                  {displayedProducts.map((product) => (
+                  {productsToShow.map((product) => (
                     <View key={String(product.id)} style={styles.productCardWrapper}>
                       <ProductCard product={product} />
                     </View>
                   ))}
                 </View>
 
-                {hasMore && (
+                {!isSearching && hasMore && (
                   <Button
                     label={loadingMore ? "Loading..." : "View More Products"}
                     onPress={handleLoadMore}

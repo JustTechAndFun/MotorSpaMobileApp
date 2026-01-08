@@ -84,12 +84,14 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#82b440',
     marginBottom: 12,
+    flexWrap: 'wrap',
   },
   serviceName: {
     fontSize: 22,
     fontWeight: '600',
     color: '#333',
     marginBottom: 8,
+    flexWrap: 'wrap',
   },
   categoryBadge: {
     flexDirection: 'row',

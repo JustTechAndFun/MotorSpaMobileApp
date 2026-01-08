@@ -8,9 +8,9 @@ import {
   Alert,
   Image,
   Modal,
-  SafeAreaView,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Card, Colors, Text, TouchableOpacity, View } from 'react-native-ui-lib';
 import { styles } from '../styles/checkout-styles';
 
@@ -134,11 +134,19 @@ export default function CheckoutScreen() {
 
       const order = await orderService.createOrder(orderRequest);
 
+      // Delete ordered items from cart
       if (isFromCart) {
         try {
-          await cartService.clearCart();
+          // Delete each ordered item from cart
+          for (const item of items) {
+            try {
+              await cartService.removeFromCart(item.id);
+            } catch (itemError) {
+              console.error(`Error deleting cart item ${item.id}:`, itemError);
+            }
+          }
         } catch (cartError) {
-          console.error('Error clearing cart:', cartError);
+          console.error('Error clearing ordered items from cart:', cartError);
         }
       }
 
@@ -148,11 +156,13 @@ export default function CheckoutScreen() {
         [
           {
             text: 'View Orders',
-            onPress: () => router.push('/orders'),
+            onPress: () => {
+              router.replace('/orders?fromCheckout=true');
+            },
           },
           {
             text: 'Continue Shopping',
-            onPress: () => router.push('/home'),
+            onPress: () => router.replace('/home'),
           },
         ]
       );
@@ -178,7 +188,7 @@ export default function CheckoutScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.screenBG }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.screenBG }} edges={['top']}>
       {/* Header */}
       <View row centerV padding-20 bg-white style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey70 }}>
         <TouchableOpacity style={{ marginRight: 15 }} onPress={() => router.back()}>

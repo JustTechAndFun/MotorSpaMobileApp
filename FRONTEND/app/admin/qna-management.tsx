@@ -9,6 +9,7 @@ import {
     RefreshControl,
     ScrollView, TextInput, TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View } from 'react-native-ui-lib';
 import { qnaService } from '../../services';
 import { styles } from '../../styles/admin-qna-management-styles';
@@ -238,7 +239,8 @@ export default function QnAManagementScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -348,22 +350,23 @@ export default function QnAManagementScreen() {
         transparent={false}
         onRequestClose={() => setReplyModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <TouchableOpacity onPress={() => setReplyModalVisible(false)}>
-              <Ionicons name="close" size={28} color="#333" />
-            </TouchableOpacity>
-            <Text style={styles.modalTitle}>
-              {selectedMessage?.reply ? 'Chỉnh sửa phản hồi' : 'Trả lời câu hỏi'}
-            </Text>
-            <TouchableOpacity onPress={handleSubmitReply} disabled={submitting}>
-              <Text style={[styles.saveButton, submitting && { opacity: 0.5 }]}>
-                {submitting ? 'Đang gửi...' : 'Gửi'}
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top']}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <TouchableOpacity onPress={() => setReplyModalVisible(false)}>
+                <Ionicons name="close" size={28} color="#333" />
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>
+                {selectedMessage?.reply ? 'Chỉnh sửa phản hồi' : 'Trả lời câu hỏi'}
               </Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity onPress={handleSubmitReply} disabled={submitting}>
+                <Text style={[styles.saveButton, submitting && { opacity: 0.5 }]}>
+                  {submitting ? 'Đang gửi...' : 'Gửi'}
+                </Text>
+              </TouchableOpacity>
+            </View>
 
-          <ScrollView style={styles.modalContent}>
+            <ScrollView style={styles.modalContent}>
             {/* User Info */}
             <View style={styles.modalSection}>
               <Text style={styles.modalLabel}>Khách hàng</Text>
@@ -428,7 +431,9 @@ export default function QnAManagementScreen() {
             <View style={{ height: 40 }} />
           </ScrollView>
         </View>
+        </SafeAreaView>
       </Modal>
     </View>
+    </SafeAreaView>
   );
 }

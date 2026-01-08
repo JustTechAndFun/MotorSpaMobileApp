@@ -21,6 +21,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View, Card, Colors } from 'react-native-ui-lib';
 
 export default function AdminProductManagementScreen() {
@@ -381,12 +382,13 @@ export default function AdminProductManagementScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.grey80 }}>
-      <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.grey80 }} edges={['top']}>
+      <View style={{ flex: 1, backgroundColor: Colors.grey80 }}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar barStyle="dark-content" />
 
-      {/* Modern Header */}
-      <View style={{ paddingTop: 5, paddingBottom: 14, paddingHorizontal: 5, backgroundColor: 'white' }}>
+        {/* Modern Header */}
+        <View style={{ paddingBottom: 14, paddingHorizontal: 5, backgroundColor: 'white' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <TouchableOpacity
             onPress={() => router.back()}
@@ -819,5 +821,6 @@ export default function AdminProductManagementScreen() {
         </View>
       </Modal>
     </View>
+    </SafeAreaView>
   );
 }

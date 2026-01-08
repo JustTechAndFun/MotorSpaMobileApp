@@ -12,6 +12,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
@@ -151,109 +153,111 @@ export default function MapPicker({
       animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Ionicons name="close" size={28} color="#333" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Select Location</Text>
-          <View style={styles.placeholder} />
-        </View>
-
-        {/* Map */}
-        <View style={styles.mapContainer}>
-          <Mapbox.MapView
-            style={styles.map}
-            styleURL={Mapbox.StyleURL.Street}
-            onPress={handleMapPress}
-          >
-            <Mapbox.Camera
-              ref={cameraRef}
-              zoomLevel={initialLocation ? 15 : 12}
-              centerCoordinate={
-                initialLocation
-                  ? [initialLocation.longitude, initialLocation.latitude]
-                  : [106.6297, 10.8231] // Default: Ho Chi Minh City
-              }
-            />
-
-            {locationPermission && (
-              <Mapbox.LocationPuck
-                puckBearingEnabled
-                puckBearing="heading"
-                pulsing={{ isEnabled: true }}
-              />
-            )}
-
-            {selectedLocation && (
-              <Mapbox.PointAnnotation
-                id="selected-location"
-                coordinate={[selectedLocation.longitude, selectedLocation.latitude]}
-              >
-                <View style={styles.markerContainer}>
-                  <Ionicons name="location" size={40} color="#82b440" />
-                </View>
-              </Mapbox.PointAnnotation>
-            )}
-          </Mapbox.MapView>
-
-          {/* Current Location Button */}
-          {locationPermission && (
-            <TouchableOpacity
-              style={styles.currentLocationButton}
-              onPress={getCurrentLocation}
-              disabled={loading}
-            >
-              <Ionicons name="locate" size={24} color="#fff" />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaView style={styles.container} edges={['top']}>
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <Ionicons name="close" size={28} color="#333" />
             </TouchableOpacity>
-          )}
+            <Text style={styles.headerTitle}>Select Location</Text>
+            <View style={styles.placeholder} />
+          </View>
 
-          {/* Loading Overlay */}
-          {loading && (
-            <View style={styles.loadingOverlay}>
-              <ActivityIndicator size="large" color="#82b440" />
-            </View>
-          )}
-        </View>
+          {/* Map */}
+          <View style={styles.mapContainer}>
+            <Mapbox.MapView
+              style={styles.map}
+              styleURL={Mapbox.StyleURL.Street}
+              onPress={handleMapPress}
+            >
+              <Mapbox.Camera
+                ref={cameraRef}
+                zoomLevel={initialLocation ? 15 : 12}
+                centerCoordinate={
+                  initialLocation
+                    ? [initialLocation.longitude, initialLocation.latitude]
+                    : [106.6297, 10.8231] // Default: Ho Chi Minh City
+                }
+              />
 
-        {/* Selected Location Info */}
-        {selectedLocation && (
-          <View style={styles.infoContainer}>
-            <View style={styles.infoContent}>
-              <Ionicons name="location" size={24} color="#82b440" />
-              <View style={styles.infoText}>
-                <Text style={styles.addressText} numberOfLines={2}>
-                  {selectedLocation.address || 'Unknown address'}
-                </Text>
-                <Text style={styles.coordinatesText}>
-                  {selectedLocation.latitude.toFixed(6)}, {selectedLocation.longitude.toFixed(6)}
-                </Text>
+              {locationPermission && (
+                <Mapbox.LocationPuck
+                  puckBearingEnabled
+                  puckBearing="heading"
+                  pulsing={{ isEnabled: true }}
+                />
+              )}
+
+              {selectedLocation && (
+                <Mapbox.PointAnnotation
+                  id="selected-location"
+                  coordinate={[selectedLocation.longitude, selectedLocation.latitude]}
+                >
+                  <View style={styles.markerContainer}>
+                    <Ionicons name="location" size={40} color="#82b440" />
+                  </View>
+                </Mapbox.PointAnnotation>
+              )}
+            </Mapbox.MapView>
+
+            {/* Current Location Button */}
+            {locationPermission && (
+              <TouchableOpacity
+                style={styles.currentLocationButton}
+                onPress={getCurrentLocation}
+                disabled={loading}
+              >
+                <Ionicons name="locate" size={24} color="#fff" />
+              </TouchableOpacity>
+            )}
+
+            {/* Loading Overlay */}
+            {loading && (
+              <View style={styles.loadingOverlay}>
+                <ActivityIndicator size="large" color="#82b440" />
+              </View>
+            )}
+          </View>
+
+          {/* Selected Location Info */}
+          {selectedLocation && (
+            <View style={styles.infoContainer}>
+              <View style={styles.infoContent}>
+                <Ionicons name="location" size={24} color="#82b440" />
+                <View style={styles.infoText}>
+                  <Text style={styles.addressText} numberOfLines={2}>
+                    {selectedLocation.address || 'Unknown address'}
+                  </Text>
+                  <Text style={styles.coordinatesText}>
+                    {selectedLocation.latitude.toFixed(6)}, {selectedLocation.longitude.toFixed(6)}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-        )}
+          )}
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={onClose}
-          >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.confirmButton,
-              !selectedLocation && styles.confirmButtonDisabled,
-            ]}
-            onPress={handleConfirm}
-            disabled={!selectedLocation}
-          >
-            <Text style={styles.confirmButtonText}>Confirm Location</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+          {/* Footer */}
+          <View style={styles.footer}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={onClose}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.confirmButton,
+                !selectedLocation && styles.confirmButtonDisabled,
+              ]}
+              onPress={handleConfirm}
+              disabled={!selectedLocation}
+            >
+              <Text style={styles.confirmButtonText}>Confirm Location</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </GestureHandlerRootView>
     </Modal>
   );
 }
@@ -269,7 +273,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    paddingTop: Platform.OS === 'ios' ? 50 : 12,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',

@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View, Button, Colors, Spacings, Card } from 'react-native-ui-lib';
 import { bookingService, locationService } from '../services';
 import { styles } from '../styles/booking-styles';
@@ -159,23 +160,26 @@ export default function BookingScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.screen, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color="#82b440" />
-        <Text style={{ marginTop: 12, color: '#666' }}>Đang tải...</Text>
-      </View>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+        <View style={[styles.screen, { justifyContent: 'center', alignItems: 'center' }]}>
+          <ActivityIndicator size="large" color="#82b440" />
+          <Text style={{ marginTop: 12, color: '#666' }}>Đang tải...</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View flex bg-grey80>
-      <StatusBar barStyle="dark-content" />
-      {/* Header */}
-      <View row centerV paddingH-20 paddingT-15 paddingB-15 bg-white style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey70 }}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color={Colors.textColor} />
-        </TouchableOpacity>
-        <Text h5 marginL-20 textColor style={{ fontWeight: '700' }}>Book Service</Text>
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View flex bg-grey80>
+        <StatusBar barStyle="dark-content" />
+        {/* Header */}
+        <View row centerV paddingH-20 paddingV-15 bg-white style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey70 }}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={24} color={Colors.textColor} />
+          </TouchableOpacity>
+          <Text h5 marginL-20 textColor style={{ fontWeight: '700' }}>Book Service</Text>
+        </View>
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Selected Services */}
@@ -396,7 +400,8 @@ export default function BookingScreen() {
           enableShadow
         />
       </ScrollView>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
 

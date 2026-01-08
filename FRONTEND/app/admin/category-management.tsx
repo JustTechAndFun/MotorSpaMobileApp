@@ -18,6 +18,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View } from 'react-native-ui-lib';
 
 export default function AdminCategoryManagementScreen() {
@@ -366,7 +367,8 @@ export default function AdminCategoryManagementScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -556,5 +558,6 @@ export default function AdminCategoryManagementScreen() {
         </View>
       </Modal>
     </View>
+    </SafeAreaView>
   );
 }

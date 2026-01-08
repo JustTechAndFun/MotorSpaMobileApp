@@ -223,8 +223,7 @@ export default function MessageDetailScreen() {
               elevation={1}
               style={{
                 borderRadius: 14,
-                backgroundColor: Colors.primaryColor,
-                opacity: 0.08,
+                backgroundColor: '#e8f5e9',
                 padding: 16,
                 borderWidth: 1,
                 borderColor: Colors.primaryColor

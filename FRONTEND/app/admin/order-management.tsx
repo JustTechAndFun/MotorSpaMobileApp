@@ -10,6 +10,7 @@ import {
     RefreshControl,
     ScrollView, TextInput, TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View } from 'react-native-ui-lib';
 import { styles } from '../../styles/admin-order-management-styles';
 
@@ -161,7 +162,8 @@ export default function AdminOrderManagement() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -307,7 +309,7 @@ export default function AdminOrderManagement() {
               {/* Total */}
               <View style={styles.orderFooter}>
                 <Text style={styles.totalLabel}>Total:</Text>
-                <Text style={styles.totalAmount}>Rp. {formatCurrency(order.total)}</Text>
+                <Text style={styles.totalAmount}>VND {formatCurrency(order.total)}</Text>
               </View>
 
               {/* Action Button */}
@@ -409,5 +411,6 @@ export default function AdminOrderManagement() {
         </View>
       </Modal>
     </View>
+    </SafeAreaView>
   );
 }

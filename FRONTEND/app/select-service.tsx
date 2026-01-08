@@ -6,9 +6,9 @@ import {
   Alert,
   FlatList,
   Image,
-  SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Card, Colors, Text, View } from 'react-native-ui-lib';
 import BottomNavigator from '../components/bottom-navigator';
 import { motorServiceService } from '../services';
@@ -213,7 +213,7 @@ export default function SelectServiceScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         <Stack.Screen options={{ headerShown: false }} />
         <View
           row
@@ -255,7 +255,7 @@ export default function SelectServiceScreen() {
 
   if (services.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         <Stack.Screen options={{ headerShown: false }} />
         <View
           row
@@ -305,7 +305,7 @@ export default function SelectServiceScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Stack.Screen options={{ headerShown: false }} />
       {/* Modern Header */}
       <View

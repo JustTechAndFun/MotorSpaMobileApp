@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, View, Colors, Card } from 'react-native-ui-lib';
 import { qnaService } from '../services';
 import { QnAMessage } from '../types/api.types';
@@ -156,17 +157,17 @@ export default function HelpCenterScreen() {
   ];
 
   return (
-    <View flex bg-grey80>
-      <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View flex bg-grey80>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar barStyle="dark-content" />
 
-      {/* Modern Header */}
-      <View
-        row
-        centerV
-        paddingH-20
-        paddingT-15
-        paddingB-18
+        {/* Modern Header */}
+        <View
+          row
+          centerV
+          paddingH-20
+          paddingV-16
         bg-white
         style={{
           borderBottomWidth: 1.5,
@@ -478,5 +479,6 @@ export default function HelpCenterScreen() {
         )}
       </View>
     </View>
+    </SafeAreaView>
   );
 }

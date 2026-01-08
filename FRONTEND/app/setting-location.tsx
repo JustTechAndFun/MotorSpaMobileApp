@@ -92,28 +92,28 @@ export default function SettingLocationPage() {
   };
 
   return (
-    <View flex bg-grey80>
-      <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <View flex bg-grey80>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar barStyle="dark-content" />
 
-      {/* Modern Header */}
-      <View
-        row
-        centerV
-        paddingH-20
-        paddingT-15
-        paddingB-18
-        bg-white
-        style={{
-          borderBottomWidth: 1.5,
-          borderBottomColor: Colors.grey70,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.05,
-          shadowRadius: 4,
-          elevation: 3
-        }}
-      >
+        {/* Modern Header */}
+        <View
+          row
+          centerV
+          paddingH-20
+          paddingV-18
+          bg-white
+          style={{
+            borderBottomWidth: 1.5,
+            borderBottomColor: Colors.grey70,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.05,
+            shadowRadius: 4,
+            elevation: 3
+          }}
+        >
         <TouchableOpacity
           onPress={() => router.back()}
           style={{
@@ -402,6 +402,7 @@ export default function SettingLocationPage() {
           </View>
         </View>
       </Modal>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
