@@ -1,15 +1,14 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
-    Alert,
-    SafeAreaView,
     ScrollView,
-    Text,
     TouchableOpacity,
-    View,
+    StatusBar,
+    Modal,
 } from 'react-native';
+import { Text, View, Colors, Card } from 'react-native-ui-lib';
 import { qnaService } from '../services';
 import { QnAMessage } from '../types/api.types';
 
@@ -19,6 +18,7 @@ export default function MessageDetailScreen() {
   
   const [message, setMessage] = useState<QnAMessage | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     if (params.id) {
@@ -33,34 +33,19 @@ export default function MessageDetailScreen() {
       setMessage(data);
     } catch (error: any) {
       console.error('Error loading message:', error);
-      Alert.alert('Lỗi', 'Không thể tải tin nhắn');
       router.back();
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      'Xác nhận xóa',
-      'Bạn có chắc muốn xóa tin nhắn này?',
-      [
-        { text: 'Hủy', style: 'cancel' },
-        {
-          text: 'Xóa',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await qnaService.deleteMessage(params.id!);
-              Alert.alert('Thành công', 'Đã xóa tin nhắn');
-              router.back();
-            } catch (error: any) {
-              Alert.alert('Lỗi', error.message || 'Không thể xóa tin nhắn');
-            }
-          },
-        },
-      ]
-    );
+  const handleDelete = async () => {
+    try {
+      await qnaService.deleteMessage(params.id!);
+      router.back();
+    } catch (error: any) {
+      console.error('Error deleting message:', error);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -83,18 +68,36 @@ export default function MessageDetailScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#333" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Chi tiết tin nhắn</Text>
-          <View style={{ width: 40 }} />
+      <View style={{ flex: 1, backgroundColor: Colors.grey80 }}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar barStyle="dark-content" />
+
+        {/* Header */}
+        <View style={{ paddingTop: 50, paddingBottom: 14, paddingHorizontal: 16, backgroundColor: 'white' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 12,
+                backgroundColor: Colors.grey80,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <MaterialIcons name="arrow-back-ios" size={18} color={Colors.textColor} style={{ marginLeft: 4 }} />
+            </TouchableOpacity>
+            <Text text60 style={{ fontWeight: 'bold', color: Colors.textColor }}>Chi tiết tin nhắn</Text>
+            <View style={{ width: 40 }} />
+          </View>
         </View>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#82b440" />
+
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={Colors.primaryColor} />
+          <Text text70 marginT-10 style={{ color: Colors.grey50 }}>Đang tải...</Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -103,202 +106,225 @@ export default function MessageDetailScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={{ flex: 1, backgroundColor: Colors.grey80 }}>
+      <Stack.Screen options={{ headerShown: false }} />
+      <StatusBar barStyle="dark-content" />
+
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Chi tiết tin nhắn</Text>
-        <TouchableOpacity onPress={handleDelete} style={styles.deleteButton}>
-          <Ionicons name="trash-outline" size={22} color="#FF3B30" />
-        </TouchableOpacity>
+      <View style={{ paddingTop: 50, paddingBottom: 14, paddingHorizontal: 16, backgroundColor: 'white' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              backgroundColor: Colors.grey80,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <MaterialIcons name="arrow-back-ios" size={18} color={Colors.textColor} style={{ marginLeft: 4 }} />
+          </TouchableOpacity>
+          <Text text60 style={{ fontWeight: 'bold', color: Colors.textColor }}>Chi tiết tin nhắn</Text>
+          <TouchableOpacity
+            onPress={() => setShowDeleteModal(true)}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              backgroundColor: Colors.red30,
+              opacity: 0.15,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <MaterialIcons name="delete-outline" size={20} color={Colors.red30} />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView style={styles.content}>
-        {/* Status */}
-        <View style={styles.statusContainer}>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(message.status) }]}>
-            <Text style={styles.statusText}>{getStatusText(message.status)}</Text>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ padding: 16 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Status Card */}
+        <Card
+          enableShadow
+          elevation={2}
+          style={{
+            marginBottom: 16,
+            borderRadius: 16,
+            backgroundColor: 'white',
+            padding: 16
+          }}
+        >
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: 12,
+                backgroundColor: getStatusColor(message.status)
+              }}
+            >
+              <Text text90 white style={{ fontWeight: 'bold' }}>
+                {getStatusText(message.status)}
+              </Text>
+            </View>
+            <Text text90 style={{ color: Colors.grey50 }}>
+              {new Date(message.createdAt).toLocaleString('vi-VN')}
+            </Text>
           </View>
-          <Text style={styles.dateText}>
-            {new Date(message.createdAt).toLocaleString('vi-VN')}
+        </Card>
+
+        {/* Subject Card */}
+        <View style={{ marginBottom: 16 }}>
+          <Text text80 style={{ fontWeight: '600', color: Colors.grey50, marginBottom: 8, textTransform: 'uppercase' }}>
+            Tiêu đề
+          </Text>
+          <Text text60 style={{ fontWeight: 'bold', color: Colors.textColor, lineHeight: 28 }}>
+            {message.subject}
           </Text>
         </View>
 
-        {/* Subject */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Tiêu đề</Text>
-          <Text style={styles.subject}>{message.subject}</Text>
+        {/* Question Card */}
+        <View style={{ marginBottom: 16 }}>
+          <Text text80 style={{ fontWeight: '600', color: Colors.grey50, marginBottom: 8, textTransform: 'uppercase' }}>
+            Câu hỏi của bạn
+          </Text>
+          <Card
+            enableShadow
+            elevation={1}
+            style={{
+              borderRadius: 14,
+              backgroundColor: 'white',
+              padding: 16
+            }}
+          >
+            <Text text80 style={{ color: Colors.textColor, lineHeight: 22 }}>
+              {message.message}
+            </Text>
+          </Card>
         </View>
 
-        {/* Message */}
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Câu hỏi của bạn</Text>
-          <View style={styles.messageBox}>
-            <Text style={styles.messageText}>{message.message}</Text>
-          </View>
-        </View>
-
-        {/* Reply */}
+        {/* Reply Section */}
         {message.reply ? (
-          <View style={styles.section}>
-            <View style={styles.replyHeader}>
-              <Ionicons name="chatbubble-ellipses" size={18} color="#82b440" />
-              <Text style={styles.replyLabel}>Phản hồi từ chúng tôi</Text>
+          <View style={{ marginBottom: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <MaterialIcons name="chat-bubble" size={18} color={Colors.primaryColor} />
+              <Text text80 style={{ fontWeight: '600', color: Colors.primaryColor, marginLeft: 6, textTransform: 'uppercase' }}>
+                Phản hồi từ chúng tôi
+              </Text>
             </View>
-            <View style={styles.replyBox}>
-              <Text style={styles.replyText}>{message.reply}</Text>
-            </View>
+            <Card
+              enableShadow
+              elevation={1}
+              style={{
+                borderRadius: 14,
+                backgroundColor: Colors.primaryColor,
+                opacity: 0.08,
+                padding: 16,
+                borderWidth: 1,
+                borderColor: Colors.primaryColor
+              }}
+            >
+              <Text text80 style={{ color: Colors.textColor, lineHeight: 22 }}>
+                {message.reply}
+              </Text>
+            </Card>
             {message.updatedAt !== message.createdAt && (
-              <Text style={styles.replyDate}>
+              <Text text90 style={{ color: Colors.grey50, marginTop: 8, fontStyle: 'italic' }}>
                 Phản hồi lúc: {new Date(message.updatedAt).toLocaleString('vi-VN')}
               </Text>
             )}
           </View>
         ) : (
-          <View style={styles.section}>
-            <View style={styles.pendingBox}>
-              <Ionicons name="time-outline" size={24} color="#FF9500" />
-              <Text style={styles.pendingText}>
+          <Card
+            enableShadow
+            elevation={1}
+            style={{
+              borderRadius: 14,
+              backgroundColor: '#fff9f0',
+              padding: 20,
+              borderWidth: 1,
+              borderColor: '#ffe4b3',
+              marginBottom: 16
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <MaterialIcons name="schedule" size={24} color="#FF9500" />
+              <Text text80 style={{ flex: 1, color: Colors.grey40, marginLeft: 12, lineHeight: 20 }}>
                 Chúng tôi đang xem xét câu hỏi của bạn và sẽ phản hồi sớm nhất có thể
               </Text>
             </View>
-          </View>
+          </Card>
         )}
       </ScrollView>
-    </SafeAreaView>
+
+      {/* Delete Confirmation Modal */}
+      <Modal visible={showDeleteModal} animationType="fade" transparent>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+          <View style={{ backgroundColor: 'white', borderRadius: 20, padding: 24, width: '100%', maxWidth: 340, alignItems: 'center' }}>
+            <View
+              style={{
+                width: 70,
+                height: 70,
+                borderRadius: 35,
+                backgroundColor: Colors.red30,
+                opacity: 0.15,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 20
+              }}
+            >
+              <MaterialIcons name="delete-outline" size={36} color={Colors.red30} />
+            </View>
+            <Text text60 style={{ fontWeight: 'bold', color: Colors.textColor, marginBottom: 8, textAlign: 'center' }}>
+              Xóa tin nhắn
+            </Text>
+            <Text text80 style={{ color: Colors.grey50, marginBottom: 24, textAlign: 'center' }}>
+              Bạn có chắc chắn muốn xóa tin nhắn này? Hành động này không thể hoàn tác.
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 12, width: '100%' }}>
+              <TouchableOpacity
+                onPress={() => setShowDeleteModal(false)}
+                style={{
+                  flex: 1,
+                  paddingVertical: 14,
+                  borderRadius: 14,
+                  backgroundColor: Colors.grey80,
+                  alignItems: 'center'
+                }}
+              >
+                <Text text70 style={{ fontWeight: 'bold', color: Colors.textColor }}>Hủy</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowDeleteModal(false);
+                  handleDelete();
+                }}
+                style={{
+                  flex: 1,
+                  paddingVertical: 14,
+                  borderRadius: 14,
+                  backgroundColor: Colors.red30,
+                  alignItems: 'center',
+                  shadowColor: Colors.red30,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 6,
+                  elevation: 4
+                }}
+              >
+                <Text text70 white style={{ fontWeight: 'bold' }}>Xóa</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 }
 
-const styles = {
-  container: {
-    flex: 1,
-    backgroundColor: '#f8f8f8',
-  },
-  header: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    justifyContent: 'space-between' as const,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingTop: 48,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700' as const,
-    color: '#333',
-  },
-  deleteButton: {
-    padding: 8,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  statusContainer: {
-    flexDirection: 'row' as const,
-    justifyContent: 'space-between' as const,
-    alignItems: 'center' as const,
-    marginBottom: 20,
-  },
-  statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 14,
-  },
-  statusText: {
-    fontSize: 13,
-    fontWeight: '600' as const,
-    color: '#fff',
-  },
-  dateText: {
-    fontSize: 13,
-    color: '#999',
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionLabel: {
-    fontSize: 13,
-    fontWeight: '600' as const,
-    color: '#666',
-    marginBottom: 8,
-    textTransform: 'uppercase' as const,
-  },
-  subject: {
-    fontSize: 20,
-    fontWeight: '700' as const,
-    color: '#333',
-    lineHeight: 28,
-  },
-  messageBox: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  messageText: {
-    fontSize: 15,
-    color: '#333',
-    lineHeight: 22,
-  },
-  replyHeader: {
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    marginBottom: 8,
-  },
-  replyLabel: {
-    fontSize: 13,
-    fontWeight: '600' as const,
-    color: '#82b440',
-    marginLeft: 6,
-    textTransform: 'uppercase' as const,
-  },
-  replyBox: {
-    backgroundColor: '#f0f8f4',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#c8e6d0',
-  },
-  replyText: {
-    fontSize: 15,
-    color: '#333',
-    lineHeight: 22,
-  },
-  replyDate: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 8,
-    fontStyle: 'italic' as const,
-  },
-  pendingBox: {
-    backgroundColor: '#fff9f0',
-    borderRadius: 12,
-    padding: 20,
-    flexDirection: 'row' as const,
-    alignItems: 'center' as const,
-    borderWidth: 1,
-    borderColor: '#ffe4b3',
-  },
-  pendingText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#666',
-    marginLeft: 12,
-    lineHeight: 20,
-  },
-};

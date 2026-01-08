@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, View } from 'react-native-ui-lib';
+import { Colors, Text, View } from 'react-native-ui-lib';
 import BottomNavigator from '../components/bottom-navigator';
 import ProductCard from '../components/product-card';
 
@@ -44,7 +44,7 @@ export default function FavoriteProducts() {
     } catch (error: any) {
       console.error('Error loading favorites:', error);
       const message = error?.response?.data?.message || 'Failed to load favorites';
-      
+
       if (!message.includes('Session expired')) {
         toast.show({
           type: 'error',
@@ -65,7 +65,7 @@ export default function FavoriteProducts() {
     }
 
     const query = searchQuery.toLowerCase();
-    const filtered = favorites.filter(product => 
+    const filtered = favorites.filter(product =>
       product.name.toLowerCase().includes(query) ||
       product.description.toLowerCase().includes(query)
     );
@@ -80,13 +80,13 @@ export default function FavoriteProducts() {
   const handleRemoveFavorite = async (productId: string | number) => {
     try {
       await favoriteService.removeFromFavorites(productId);
-      
+
       toast.show({
         type: 'success',
         text1: 'Removed',
         text2: 'Product removed from favorites',
       });
-      
+
       loadFavorites();
     } catch (error: any) {
       console.error('Error removing favorite:', error);
@@ -101,7 +101,7 @@ export default function FavoriteProducts() {
   const renderProduct = ({ item }: { item: Product }) => {
     return (
       <View style={styles.productWrapper}>
-        <ProductCard 
+        <ProductCard
           product={item}
           showFavoriteButton
           onFavoriteChange={() => handleRemoveFavorite(item.id)}
@@ -114,26 +114,26 @@ export default function FavoriteProducts() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.content}>
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#000" />
+        <View row centerV padding-20 bg-white style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey70 }}>
+          <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 15 }}>
+            <Ionicons name="arrow-back" size={24} color={Colors.textColor} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Favorite Products</Text>
-          <View style={{ width: 40 }} />
+          <Text h4 textColor>Favorite Products</Text>
         </View>
 
         {/* Search */}
-        <View style={styles.searchContainer}>
-          <Ionicons name="search-outline" size={20} color="#666" />
-          <TextInput 
-            placeholder="Search favorites" 
-            style={styles.searchInput}
+        <View row centerV margin-16 paddingH-15 bg-grey80 style={{ height: 45, borderRadius: 12 }}>
+          <Ionicons name="search-outline" size={20} color={Colors.grey30} />
+          <TextInput
+            placeholder="Search favorites"
+            placeholderTextColor={Colors.grey40}
+            style={{ flex: 1, marginLeft: 10, fontSize: 16, color: Colors.textColor }}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={20} color="#666" />
+              <Ionicons name="close-circle" size={20} color={Colors.grey40} />
             </TouchableOpacity>
           )}
         </View>
@@ -155,14 +155,14 @@ export default function FavoriteProducts() {
               <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
             }
             ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Ionicons name="heart-outline" size={80} color="#ccc" />
-                <Text style={styles.emptyText}>
+              <View flex center padding-40 marginT-40>
+                <Ionicons name="heart-outline" size={80} color={Colors.grey60} />
+                <Text h5 grey30 center marginT-20>
                   {searchQuery ? 'No products found' : 'No favorite products yet'}
                 </Text>
-                <Text style={styles.emptySubtext}>
-                  {searchQuery 
-                    ? 'Try a different search term' 
+                <Text bodySmall grey40 center marginT-10>
+                  {searchQuery
+                    ? 'Try a different search term'
                     : 'Add products to favorites by tapping the heart icon'}
                 </Text>
               </View>

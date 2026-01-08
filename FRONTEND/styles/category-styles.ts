@@ -6,18 +6,19 @@ const iconSize = width > 768 ? 80 : 60;
 export const styles = StyleSheet.create({
   container: {
     marginVertical: 15,
-    paddingHorizontal: width * 0.04,
   },
   title: {
-    fontSize: width > 768 ? 22 : 18,
+    fontSize: width > 768 ? 26 : 22,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15,
+    marginBottom: 18,
+    letterSpacing: 0.3,
   },
   grid: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: width * 0.04,
+    paddingVertical: 25,
+    paddingHorizontal: 15,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

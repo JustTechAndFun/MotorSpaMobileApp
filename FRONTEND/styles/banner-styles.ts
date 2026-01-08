@@ -5,8 +5,10 @@ const { width } = Dimensions.get('window');
 export const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: width * 0.4,
-    marginBottom: 15,
+    height: 180,
+    marginBottom: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
   },
   banner: {
     width: '100%',

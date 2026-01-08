@@ -1,38 +1,36 @@
-import { Dimensions, StyleSheet } from 'react-native';
-
-const { width } = Dimensions.get('window');
-const iconContainerSize = width > 768 ? 60 : 50;
+import { StyleSheet } from 'react-native';
+import { Colors } from 'react-native-ui-lib';
 
 export const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#B8D4A8',
-    paddingVertical: width > 768 ? 15 : 12,
-    paddingHorizontal: width * 0.05,
-    borderTopWidth: 1,
-    borderTopColor: '#A0C490',
-    elevation: 8,
+    backgroundColor: Colors.white,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderTopWidth: 0,
+    elevation: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
   },
   navButton: {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    paddingVertical: 8,
   },
   iconContainer: {
-    width: iconContainerSize,
-    height: iconContainerSize,
-    borderRadius: iconContainerSize / 2,
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
   },
   activeIcon: {
-    backgroundColor: '#4A7C59',
+    backgroundColor: Colors.primaryColor,
   },
 });

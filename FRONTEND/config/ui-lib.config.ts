@@ -6,20 +6,49 @@ import { BorderRadiuses, Colors, Spacings, Typography } from 'react-native-ui-li
 
 // Brand Colors
 const brandColors = {
-  primary: '#82b440',      // Green (main brand color)
-  secondary: '#6B9B37',    // Darker green
-  accent: '#9BCF53',       // Lighter green
-  background: '#F5F5F5',
+  primaryColor: '#6366F1',      // Indigo 500
+  primaryDarker: '#4F46E5',     // Indigo 600
+  primaryLighter: '#818CF8',    // Indigo 400
+  secondaryColor: '#F59E0B',    // Amber 500
+  accentColor: '#10B981',       // Emerald 500
+
+  // Backgrounds
+  screenBG: '#F1F5F9',          // Slate 100
+  cardBG: '#FFFFFF',
   surface: '#FFFFFF',
-  error: '#FF3B30',
-  warning: '#FF9500',
-  success: '#34C759',
-  info: '#007AFF',
-  text: '#333333',
-  textSecondary: '#666666',
-  textTertiary: '#999999',
-  border: '#E0E0E0',
-  disabled: '#CCCCCC',
+
+  // Text
+  textColor: '#0F172A',         // Slate 900
+  textSecondary: '#64748B',    // Slate 500
+  textTertiary: '#94A3B8',     // Slate 400
+  textInverse: '#FFFFFF',
+
+  // Status
+  success: '#10B981',
+  error: '#EF4444',
+  warning: '#F59E0B',
+
+  // UI Elements
+  border: '#E2E8F0',            // Slate 200
+  divider: '#F1F5F9',           // Slate 100
+  disabled: '#CBD5E1',
+
+  // Greyscale for legacy/misc usage
+  grey10: '#1F2937',
+  grey20: '#374151',
+  grey30: '#4B5563',
+  grey40: '#6B7280',
+  grey50: '#9CA3AF',
+  grey60: '#D1D5DB',
+  grey70: '#E5E7EB',
+  grey80: '#F3F4F6',
+
+  // Action Colors
+  red30: '#EF4444',
+  orange30: '#F59E0B',
+  orange80: '#FEF3C7',
+  indigo80: '#E0E7FF',
+  indigo70: '#C7D2FE',
 };
 
 // Load brand colors
@@ -28,8 +57,8 @@ Colors.loadColors(brandColors);
 // Load design tokens
 Colors.loadSchemes({
   light: {
-    screenBG: brandColors.background,
-    textColor: brandColors.text,
+    screenBG: brandColors.screenBG,
+    textColor: brandColors.textColor,
     moonOrSun: Colors.yellow30,
     mountainForeground: Colors.green30,
     mountainBackground: Colors.green50,

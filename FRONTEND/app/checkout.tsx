@@ -10,9 +10,8 @@ import {
   Modal,
   SafeAreaView,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
-import { Text, View } from 'react-native-ui-lib';
+import { Button, Card, Colors, Text, TouchableOpacity, View } from 'react-native-ui-lib';
 import { styles } from '../styles/checkout-styles';
 
 interface CartItem {
@@ -31,7 +30,7 @@ interface CartItem {
 export default function CheckoutScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  
+
   let items: CartItem[] = [];
   let isFromCart = false;
   try {
@@ -179,154 +178,163 @@ export default function CheckoutScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.screenBG }}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+      <View row centerV padding-20 bg-white style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey70 }}>
+        <TouchableOpacity style={{ marginRight: 15 }} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color={Colors.grey10} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Checkout</Text>
-        <View style={styles.headerPlaceholder} />
+        <Text h3 textColor>Checkout</Text>
       </View>
 
-      <View style={styles.content}>
-
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      <View flex>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ padding: 20, paddingBottom: 120 }}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Section 1: Product & Delivery Address */}
-          <View style={styles.section}>
-            {/* Product Box */}
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="cube-outline" size={20} color="#333" />
-                <Text style={styles.cardTitle}>Product</Text>
+          <View marginB-20>
+            {/* Product Card */}
+            <Card padding-16 marginB-15 bg-white style={{ borderRadius: 16 }}>
+              <View row centerV marginB-12>
+                <Ionicons name="cube-outline" size={20} color={Colors.primaryColor} />
+                <Text bodyStrong grey10 marginL-8>Products</Text>
               </View>
               {items.map((item) => (
-                <View key={item.id} style={styles.productRow}>
+                <View key={item.id} row marginB-12 style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey80, paddingBottom: 12 }}>
                   <Image
                     source={{ uri: item.product.imageUrl || 'https://via.placeholder.com/80' }}
-                    style={styles.productImage}
+                    style={{ width: 60, height: 60, borderRadius: 12, backgroundColor: Colors.grey80 }}
                   />
-                  <View style={styles.productInfo}>
-                    <Text style={styles.productName} numberOfLines={2}>
+                  <View flex marginL-12 centerV>
+                    <Text bodySmall grey10 numberOfLines={2} style={{ fontWeight: '600' }}>
                       {item.product.name}
                     </Text>
-                    <View style={styles.productDetails}>
-                      <Text style={styles.quantity}>x{item.quantity}</Text>
-                      <Text style={styles.price}>
-                        Rp. {formatCurrency(item.price)}
+                    <View row spread centerV marginT-4>
+                      <Text caption grey40>Qty: {item.quantity}</Text>
+                      <Text bodySmall primaryColor style={{ fontWeight: '700' }}>
+                        {formatCurrency(item.price)} VNĐ
                       </Text>
                     </View>
                   </View>
                 </View>
               ))}
-            </View>
+            </Card>
 
-            {/* Delivery Address Box */}
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="location-outline" size={20} color="#333" />
-                <Text style={styles.cardTitle}>Delivery Address</Text>
-                <TouchableOpacity 
-                  style={styles.editButton}
+            {/* Delivery Address Card */}
+            <Card padding-16 bg-white style={{ borderRadius: 16 }}>
+              <View row spread centerV marginB-12>
+                <View row centerV>
+                  <Ionicons name="location-outline" size={20} color={Colors.primaryColor} />
+                  <Text bodyStrong grey10 marginL-8>Delivery Address</Text>
+                </View>
+                <TouchableOpacity
                   onPress={() => router.push('/setting-location')}
                 >
-                  <Text style={styles.editText}>Change</Text>
+                  <Text bodySmall primaryColor style={{ fontWeight: '600' }}>Change</Text>
                 </TouchableOpacity>
               </View>
+
               {loadingAddress ? (
-                <ActivityIndicator size="small" color="#82b440" style={{ marginVertical: 12 }} />
+                <ActivityIndicator size="small" color={Colors.primaryColor} style={{ marginVertical: 12 }} />
               ) : deliveryAddress ? (
-                <View style={styles.addressContent}>
-                  <Text style={styles.addressName}>{deliveryAddress.name}</Text>
-                  <Text style={styles.addressDetails}>{deliveryAddress.phone}</Text>
-                  <Text style={styles.addressCity}>{deliveryAddress.address}</Text>
+                <View>
+                  <Text bodyStrong grey10>{deliveryAddress.name}</Text>
+                  <Text bodySmall grey40 marginV-2>{deliveryAddress.phone}</Text>
+                  <Text bodySmall grey40 numberOfLines={2}>{deliveryAddress.address}</Text>
                 </View>
               ) : (
-                <TouchableOpacity 
-                  style={styles.emptyState}
+                <TouchableOpacity
+                  row centerV paddingV-12
                   onPress={() => router.push('/add-location')}
                 >
-                  <Ionicons name="add-circle-outline" size={24} color="#82b440" />
-                  <Text style={styles.emptyStateText}>Add Delivery Address</Text>
+                  <Ionicons name="add-circle-outline" size={24} color={Colors.primaryColor} />
+                  <Text bodySmall primaryColor marginL-8 style={{ fontWeight: '600' }}>Add Delivery Address</Text>
                 </TouchableOpacity>
               )}
-            </View>
+            </Card>
           </View>
 
           {/* Section 2: Payment Method */}
-          <View style={styles.section}>
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="cash-outline" size={20} color="#333" />
-                <Text style={styles.cardTitle}>Payment Method</Text>
-                <TouchableOpacity 
-                  style={styles.editButton}
+          <View marginB-20>
+            <Card padding-16 bg-white style={{ borderRadius: 16 }}>
+              <View row spread centerV marginB-12>
+                <View row centerV>
+                  <Ionicons name="cash-outline" size={20} color={Colors.primaryColor} />
+                  <Text bodyStrong grey10 marginL-8>Payment Method</Text>
+                </View>
+                <TouchableOpacity
                   onPress={() => setPaymentModalVisible(true)}
                 >
-                  <Text style={styles.editText}>Change</Text>
+                  <Text bodySmall primaryColor style={{ fontWeight: '600' }}>Change</Text>
                 </TouchableOpacity>
               </View>
               {loadingPayments ? (
-                <ActivityIndicator size="small" color="#82b440" style={{ marginVertical: 12 }} />
+                <ActivityIndicator size="small" color={Colors.primaryColor} style={{ marginVertical: 12 }} />
               ) : selectedPayment ? (
-                <View style={styles.paymentOption}>
-                  <Ionicons name={getPaymentIcon(selectedPayment) as any} size={20} color="#333" />
-                  <Text style={styles.paymentLabel}>{getPaymentLabel(selectedPayment)}</Text>
+                <View row centerV>
+                  <Ionicons name={getPaymentIcon(selectedPayment) as any} size={20} color={Colors.grey10} />
+                  <Text bodySmall grey10 marginL-12 flex>{getPaymentLabel(selectedPayment)}</Text>
                   {selectedPayment.isDefault && (
-                    <View style={styles.defaultBadge}>
-                      <Text style={styles.defaultBadgeText}>Default</Text>
+                    <View bg-indigo80 paddingH-6 paddingV-2 br10>
+                      <Text extraSmall primaryColor style={{ fontWeight: '600' }}>Default</Text>
                     </View>
                   )}
                 </View>
               ) : (
-                <TouchableOpacity 
-                  style={styles.addPaymentButton}
+                <TouchableOpacity
+                  row centerV paddingV-12 center
+                  style={{ borderStyle: 'dotted', borderWidth: 1, borderColor: Colors.primaryColor, borderRadius: 12 }}
                   onPress={() => router.push('/setting-payment')}
                 >
-                  <Ionicons name="add-circle-outline" size={20} color="#82b440" />
-                  <Text style={styles.addPaymentText}>Add Payment Method</Text>
+                  <Ionicons name="add-circle-outline" size={20} color={Colors.primaryColor} />
+                  <Text bodySmall primaryColor marginL-8 style={{ fontWeight: '600' }}>Add Payment Method</Text>
                 </TouchableOpacity>
               )}
-            </View>
+            </Card>
           </View>
 
           {/* Section 3: Price Details */}
-          <View style={styles.section}>
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="receipt-outline" size={20} color="#333" />
-                <Text style={styles.cardTitle}>Purchase Details</Text>
+          <View marginB-20>
+            <Card padding-16 bg-white style={{ borderRadius: 16 }}>
+              <View row centerV marginB-12>
+                <Ionicons name="receipt-outline" size={20} color={Colors.primaryColor} />
+                <Text bodyStrong grey10 marginL-8>Purchase Details</Text>
               </View>
-              <View style={styles.priceRow}>
-                <Text style={styles.priceLabel}>Total Price ({items.length} {items.length === 1 ? 'product' : 'products'})</Text>
-                <Text style={styles.priceValue}>Rp. {formatCurrency(subtotal)}</Text>
+              <View row spread centerV marginB-8>
+                <Text bodySmall grey40>Subtotal ({items.length} services)</Text>
+                <Text bodySmall grey10>{formatCurrency(subtotal)} VNĐ</Text>
               </View>
-              <View style={styles.divider} />
-              <View style={[styles.priceRow, styles.totalRow]}>
-                <Text style={styles.totalLabel}>Total Payment</Text>
-                <Text style={styles.totalValue}>Rp. {formatCurrency(total)}</Text>
+              <View row spread centerV marginB-8>
+                <Text bodySmall grey40>Shipping Fee</Text>
+                <Text bodySmall grey10>0 VNĐ</Text>
               </View>
-            </View>
+              <View height={1} bg-grey80 marginV-12 />
+              <View row spread centerV>
+                <Text bodyStrong grey10>Total Payment</Text>
+                <Text h4 primaryColor>{formatCurrency(total)} VNĐ</Text>
+              </View>
+            </Card>
           </View>
         </ScrollView>
 
         {/* Bottom: Order Now Button */}
-        <View style={styles.footer}>
-          <View style={styles.footerInfo}>
-            <Text style={styles.footerLabel}>Total Payment:</Text>
-            <Text style={styles.footerTotal}>Rp. {formatCurrency(total)}</Text>
+        <View bg-white padding-20 style={{ borderTopWidth: 1, borderTopColor: Colors.grey70, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 12 }}>
+          <View row spread centerV marginB-15>
+            <Text bodyStrong grey40>Total Payment</Text>
+            <Text h3 primaryColor>{formatCurrency(total)} VNĐ</Text>
           </View>
-          <TouchableOpacity 
-            style={[styles.confirmButton, isCreatingOrder && styles.confirmButtonDisabled]} 
+          <Button
+            label={isCreatingOrder ? "Processing..." : "Order Now"}
             onPress={handleConfirmOrder}
             disabled={isCreatingOrder}
-          >
-            {isCreatingOrder ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.confirmButtonText}>Order Now</Text>
-            )}
-          </TouchableOpacity>
+            backgroundColor={Colors.primaryColor}
+            size="large"
+            borderRadius={15}
+            enableShadow
+            labelStyle={{ fontWeight: '800' }}
+          />
         </View>
       </View>
 
@@ -337,70 +345,77 @@ export default function CheckoutScreen() {
         transparent={true}
         onRequestClose={() => setPaymentModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Payment Method</Text>
+        <View flex style={{ backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
+          <View bg-white style={{ borderTopLeftRadius: 30, borderTopRightRadius: 30, padding: 25, maxHeight: '80%' }}>
+            <View row spread centerV marginB-25>
+              <Text h3 grey10>Select Payment Method</Text>
               <TouchableOpacity onPress={() => setPaymentModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#333" />
+                <Ionicons name="close" size={28} color={Colors.grey10} />
               </TouchableOpacity>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
               {paymentMethods.map((method) => (
-                <TouchableOpacity
+                <Card
                   key={method.id}
-                  style={[
-                    styles.paymentMethodItem,
-                    selectedPayment?.id === method.id && styles.paymentMethodItemSelected
-                  ]}
+                  padding-16
+                  marginB-15
                   onPress={() => {
                     setSelectedPayment(method);
                     setPaymentModalVisible(false);
                   }}
+                  style={{
+                    borderRadius: 16,
+                    borderWidth: selectedPayment?.id === method.id ? 2 : 1,
+                    borderColor: selectedPayment?.id === method.id ? Colors.primaryColor : Colors.grey70
+                  }}
                 >
-                  <View style={styles.paymentMethodIcon}>
-                    <Ionicons name={getPaymentIcon(method) as any} size={24} color="#82b440" />
-                  </View>
-                  <View style={styles.paymentMethodInfo}>
-                    <View style={styles.paymentMethodNameRow}>
-                      <Text style={styles.paymentMethodName}>{method.name}</Text>
-                      {method.isDefault && (
-                        <View style={styles.defaultBadge}>
-                          <Text style={styles.defaultBadgeText}>Default</Text>
-                        </View>
-                      )}
+                  <View row centerV>
+                    <View width={48} height={48} br100 bg-indigo80 center marginR-15>
+                      <Ionicons name={getPaymentIcon(method) as any} size={24} color={Colors.primaryColor} />
                     </View>
-                    <Text style={styles.paymentMethodDetails}>
-                      {method.lastFourDigits && `•••• ${method.lastFourDigits}`}
-                      {method.cardBrand && ` • ${method.cardBrand}`}
-                      {method.walletProvider && method.walletProvider}
-                      {method.bankName && method.bankName}
-                    </Text>
+                    <View flex>
+                      <View row centerV spread>
+                        <Text bodyStrong grey10>{method.name}</Text>
+                        {method.isDefault && (
+                          <View bg-indigo70 paddingH-8 paddingV-2 br10>
+                            <Text extraSmall primaryColor style={{ fontWeight: '600' }}>Default</Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text bodySmall grey40 marginT-4>
+                        {method.lastFourDigits && `•••• ${method.lastFourDigits}`}
+                        {method.cardBrand && ` • ${method.cardBrand}`}
+                        {method.walletProvider && method.walletProvider}
+                        {method.bankName && method.bankName}
+                      </Text>
+                    </View>
+                    {selectedPayment?.id === method.id && (
+                      <Ionicons name="checkmark-circle" size={24} color={Colors.primaryColor} style={{ marginLeft: 10 }} />
+                    )}
                   </View>
-                  {selectedPayment?.id === method.id && (
-                    <Ionicons name="checkmark-circle" size={24} color="#82b440" />
-                  )}
-                </TouchableOpacity>
+                </Card>
               ))}
 
               {paymentMethods.length === 0 && (
-                <View style={styles.emptyPayment}>
-                  <Ionicons name="card-outline" size={48} color="#ccc" />
-                  <Text style={styles.emptyPaymentText}>No payment methods available</Text>
+                <View center paddingV-40>
+                  <Ionicons name="card-outline" size={64} color={Colors.grey70} />
+                  <Text bodySmall grey40 marginT-15>No payment methods available</Text>
                 </View>
               )}
 
-              <TouchableOpacity
-                style={styles.addPaymentMethodButton}
+              <Button
+                label="Add New Payment Method"
                 onPress={() => {
                   setPaymentModalVisible(false);
                   router.push('/setting-payment');
                 }}
-              >
-                <Ionicons name="add-circle" size={20} color="#82b440" />
-                <Text style={styles.addPaymentMethodText}>Add New Payment Method</Text>
-              </TouchableOpacity>
+                link
+                primaryColor
+                marginT-10
+                labelStyle={{ fontWeight: '700' }}
+                iconSource={() => <Ionicons name="add" size={18} color={Colors.primaryColor} style={{ marginRight: 5 }} />}
+              />
             </ScrollView>
           </View>
         </View>

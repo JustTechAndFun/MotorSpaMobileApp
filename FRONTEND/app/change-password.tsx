@@ -1,16 +1,16 @@
 import { userService } from '@/services';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  SafeAreaView,
   TextInput,
   TouchableOpacity,
+  ScrollView,
+  StatusBar,
 } from 'react-native';
-import { Text, View } from 'react-native-ui-lib';
-import { styles } from '../styles/change-password-styles';
+import { Text, View, Colors } from 'react-native-ui-lib';
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
@@ -52,7 +52,7 @@ export default function ChangePasswordScreen() {
     try {
       setIsLoading(true);
       await userService.changePassword(currentPassword, newPassword);
-      
+
       Alert.alert('Success', 'Password changed successfully!', [
         {
           text: 'OK',
@@ -71,108 +71,205 @@ export default function ChangePasswordScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color="#333" />
+    <View flex bg-grey80>
+      <Stack.Screen options={{ headerShown: false }} />
+      <StatusBar barStyle="dark-content" />
+
+      {/* Modern Header */}
+      <View
+        row
+        centerV
+        paddingH-20
+        paddingT-15
+        paddingB-18
+        bg-white
+        style={{
+          borderBottomWidth: 1.5,
+          borderBottomColor: Colors.grey70,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
+          elevation: 3
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 12,
+            backgroundColor: Colors.grey80,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 15
+          }}
+        >
+          <Ionicons name="arrow-back" size={24} color={Colors.textColor} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Password</Text>
-        <View style={styles.placeholder} />
+        <Text text40 textColor style={{ fontWeight: 'bold' }}>Change Password</Text>
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.section}>
-          <Text style={styles.label}>Current Password</Text>
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="lock-outline" size={20} color="#999" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter current password"
-              placeholderTextColor="#999"
-              secureTextEntry={!showCurrentPassword}
-              value={currentPassword}
-              onChangeText={setCurrentPassword}
-              autoCapitalize="none"
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingTop: 20, paddingHorizontal: 20, paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Current Password */}
+        <Text text70 textColor marginB-12 style={{ fontWeight: 'bold' }}>Current Password</Text>
+        <View
+          row
+          centerV
+          paddingH-16
+          paddingV-14
+          marginB-24
+          style={{
+            backgroundColor: Colors.grey80,
+            borderRadius: 16
+          }}
+        >
+          <MaterialIcons name="lock-outline" size={22} color={Colors.grey40} />
+          <TextInput
+            style={{
+              flex: 1,
+              fontSize: 15,
+              color: Colors.textColor,
+              marginLeft: 12,
+              marginRight: 8
+            }}
+            placeholder="Enter current password"
+            placeholderTextColor={Colors.grey40}
+            secureTextEntry={!showCurrentPassword}
+            value={currentPassword}
+            onChangeText={setCurrentPassword}
+            autoCapitalize="none"
+          />
+          <TouchableOpacity
+            onPress={() => setShowCurrentPassword(!showCurrentPassword)}
+            style={{ padding: 4 }}
+          >
+            <Ionicons
+              name={showCurrentPassword ? 'eye-outline' : 'eye-off-outline'}
+              size={22}
+              color={Colors.grey40}
             />
-            <TouchableOpacity
-              onPress={() => setShowCurrentPassword(!showCurrentPassword)}
-              style={styles.eyeIcon}
-            >
-              <Ionicons
-                name={showCurrentPassword ? 'eye-outline' : 'eye-off-outline'}
-                size={20}
-                color="#999"
-              />
-            </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.divider} />
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>ENTER NEW PASSWORD</Text>
-          
-          <Text style={styles.label}>New Password</Text>
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="lock-outline" size={20} color="#999" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter new password (minimum 6 characters)"
-              placeholderTextColor="#999"
-              secureTextEntry={!showNewPassword}
-              value={newPassword}
-              onChangeText={setNewPassword}
-              autoCapitalize="none"
-            />
-            <TouchableOpacity
-              onPress={() => setShowNewPassword(!showNewPassword)}
-              style={styles.eyeIcon}
-            >
-              <Ionicons
-                name={showNewPassword ? 'eye-outline' : 'eye-off-outline'}
-                size={20}
-                color="#999"
-              />
-            </TouchableOpacity>
-          </View>
-
-          <Text style={styles.label}>Confirm New Password</Text>
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="lock-outline" size={20} color="#999" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Re-enter new password"
-              placeholderTextColor="#999"
-              secureTextEntry={!showConfirmPassword}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              autoCapitalize="none"
-            />
-            <TouchableOpacity
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-              style={styles.eyeIcon}
-            >
-              <Ionicons
-                name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
-                size={20}
-                color="#999"
-              />
-            </TouchableOpacity>
-          </View>
+        {/* Divider with label */}
+        <View marginB-24>
+          <Text text80 style={{ color: Colors.primaryColor, fontWeight: 'bold' }}>
+            ENTER NEW PASSWORD
+          </Text>
         </View>
 
+        {/* New Password */}
+        <Text text70 textColor marginB-12 style={{ fontWeight: 'bold' }}>New Password</Text>
+        <View
+          row
+          centerV
+          paddingH-16
+          paddingV-14
+          marginB-24
+          style={{
+            backgroundColor: Colors.grey80,
+            borderRadius: 16
+          }}
+        >
+          <MaterialIcons name="lock-outline" size={22} color={Colors.grey40} />
+          <TextInput
+            style={{
+              flex: 1,
+              fontSize: 15,
+              color: Colors.textColor,
+              marginLeft: 12,
+              marginRight: 8
+            }}
+            placeholder="Enter new password (minimum 6 characters)"
+            placeholderTextColor={Colors.grey40}
+            secureTextEntry={!showNewPassword}
+            value={newPassword}
+            onChangeText={setNewPassword}
+            autoCapitalize="none"
+          />
+          <TouchableOpacity
+            onPress={() => setShowNewPassword(!showNewPassword)}
+            style={{ padding: 4 }}
+          >
+            <Ionicons
+              name={showNewPassword ? 'eye-outline' : 'eye-off-outline'}
+              size={22}
+              color={Colors.grey40}
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Confirm New Password */}
+        <Text text70 textColor marginB-12 style={{ fontWeight: 'bold' }}>Confirm New Password</Text>
+        <View
+          row
+          centerV
+          paddingH-16
+          paddingV-14
+          marginB-36
+          style={{
+            backgroundColor: Colors.grey80,
+            borderRadius: 16
+          }}
+        >
+          <MaterialIcons name="lock-outline" size={22} color={Colors.grey40} />
+          <TextInput
+            style={{
+              flex: 1,
+              fontSize: 15,
+              color: Colors.textColor,
+              marginLeft: 12,
+              marginRight: 8
+            }}
+            placeholder="Re-enter new password"
+            placeholderTextColor={Colors.grey40}
+            secureTextEntry={!showConfirmPassword}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            autoCapitalize="none"
+          />
+          <TouchableOpacity
+            onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+            style={{ padding: 4 }}
+          >
+            <Ionicons
+              name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
+              size={22}
+              color={Colors.grey40}
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Save Button */}
         <TouchableOpacity
-          style={[styles.saveButton, isLoading && styles.saveButtonDisabled]}
           onPress={handleChangePassword}
           disabled={isLoading}
+          activeOpacity={0.7}
+          style={{
+            paddingVertical: 18,
+            borderRadius: 18,
+            backgroundColor: isLoading ? Colors.grey40 : Colors.primaryColor,
+            alignItems: 'center',
+            justifyContent: 'center',
+            shadowColor: Colors.primaryColor,
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: isLoading ? 0 : 0.3,
+            shadowRadius: 8,
+            elevation: isLoading ? 0 : 6
+          }}
         >
           {isLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.saveButtonText}>Save</Text>
+            <Text text60 white style={{ fontWeight: 'bold' }}>Save</Text>
           )}
         </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </ScrollView>
+    </View>
   );
 }

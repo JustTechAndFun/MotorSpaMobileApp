@@ -3,25 +3,24 @@ import { authService, googleAuthService } from '@/services';
 import { FontAwesome, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { View, Text, Button, Colors, Spacings, Image, LoaderScreen } from 'react-native-ui-lib';
 import {
   Alert,
-  Image,
   ImageBackground,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
   ScrollView,
-  Text,
   TextInput,
   TouchableOpacity,
-  View,
+  StatusBar,
 } from 'react-native';
 import { styles } from '../styles/login-styles';
 
 export default function LoginScreen() {
   const router = useRouter();
   const { login, isLoading, error, clearError } = useAuth();
-  
+
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -93,84 +92,133 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    <View flex bg-white>
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
       <ImageBackground
-        source={require('../assets/images/background.png')}
-        style={styles.bg}
-        imageStyle={{ resizeMode: 'cover', opacity: 0.9 }}
+        source={{ uri: 'https://images.unsplash.com/photo-1558981285-6f0c94958bb6?auto=format&fit=crop&q=80&w=1000' }}
+        style={{ flex: 1, justifyContent: 'flex-end' }}
       >
-        <SafeAreaView style={styles.safe}>
-          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            <View style={styles.logoWrap}>
-              <Image source={require('../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
+        <View absF bg-black style={{ opacity: 0.5 }} />
+
+        <View padding-30 style={{ borderTopLeftRadius: 35, borderTopRightRadius: 35, backgroundColor: Colors.white }}>
+          <View marginB-35 centerH>
+            <View
+              width={60}
+              height={60}
+              center
+              br100
+              bg-primaryColor
+              marginB-15
+              style={{ elevation: 8, shadowColor: Colors.primaryColor, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 }}
+            >
+              <FontAwesome5 name="motorcycle" size={28} color={Colors.white} />
+            </View>
+            <Text text50 primaryColor style={{ fontWeight: 'bold', letterSpacing: 0.5 }}>MotorSpa</Text>
+            <Text text80 textSecondary marginT-8 center>
+              Your trusted motorcycle care partner
+            </Text>
+          </View>
+
+          <View>
+            <View
+              row
+              centerV
+              marginB-18
+              paddingH-18
+              paddingV-4
+              style={{
+                height: 58,
+                borderRadius: 20,
+                backgroundColor: Colors.grey80,
+                borderWidth: 1.5,
+                borderColor: 'transparent'
+              }}
+            >
+              <FontAwesome name="phone" size={20} color={Colors.primaryColor} style={{ marginRight: 15 }} />
+              <TextInput
+                style={{ flex: 1, fontSize: 16, color: Colors.textColor, fontWeight: '500' }}
+                placeholder="Phone Number"
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+                autoCapitalize="none"
+                placeholderTextColor={Colors.grey40}
+              />
             </View>
 
-            <View style={styles.card}>
-              <Text style={styles.title}>LOG IN</Text>
-              <Text style={styles.subtitle}>Welcome back!</Text>
-
-              <View style={styles.inputRow}>
-                <FontAwesome name="phone" size={18} color="#666" style={styles.icon} />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Phone Number (0987654321)"
-                  value={phone}
-                  onChangeText={setPhone}
-                  keyboardType="phone-pad"
-                  autoCapitalize="none"
-                  placeholderTextColor="#999"
-                />
-              </View>
-
-              <View style={styles.inputRow}>
-                <MaterialIcons name="lock-outline" size={20} color="#666" style={styles.icon} />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Password"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
-                  placeholderTextColor="#999"
-                />
-              </View>
-
-              <TouchableOpacity
-                style={[styles.primaryButton, isLoading && { opacity: 0.6 }]}
-                onPress={onLogin}
-                disabled={isLoading}
-              >
-                <Text style={styles.primaryButtonText}>
-                  {isLoading ? 'Logging in...' : 'LOG IN'}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.linkButton} onPress={onSignUp}>
-                <Text style={styles.linkButtonText}>Don't have an account? Sign up</Text>
-              </TouchableOpacity>
-
-              <View style={styles.orDivider}>
-                <View style={styles.orLine} />
-                <Text style={styles.orText}>OR</Text>
-                <View style={styles.orLine} />
-              </View>
-
-              <TouchableOpacity
-                style={[styles.googleButton, (isGoogleLoading || isLoading) && { opacity: 0.6 }]}
-                onPress={onLoginWithGoogle}
-                disabled={isGoogleLoading || isLoading}
-              >
-                <FontAwesome5 name="google" size={18} color="#DB4437" style={{ marginRight: 8 }} />
-                <Text style={styles.googleButtonText}>
-                  {isGoogleLoading ? 'Processing...' : 'Continue with Google'}
-                </Text>
-              </TouchableOpacity>
+            <View
+              row
+              centerV
+              marginB-28
+              paddingH-18
+              paddingV-4
+              style={{
+                height: 58,
+                borderRadius: 20,
+                backgroundColor: Colors.grey80,
+                borderWidth: 1.5,
+                borderColor: 'transparent'
+              }}
+            >
+              <MaterialIcons name="lock-outline" size={22} color={Colors.primaryColor} style={{ marginRight: 15 }} />
+              <TextInput
+                style={{ flex: 1, fontSize: 16, color: Colors.textColor, fontWeight: '500' }}
+                placeholder="Password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                placeholderTextColor={Colors.grey40}
+              />
             </View>
-          </ScrollView>
-        </SafeAreaView>
+
+            <Button
+              label={isLoading ? "Logging in..." : "LOG IN"}
+              onPress={onLogin}
+              backgroundColor={Colors.primaryColor}
+              disabled={isLoading}
+              marginB-12
+              style={{ height: 58, borderRadius: 20 }}
+              labelStyle={{ fontSize: 16, fontWeight: 'bold', letterSpacing: 1 }}
+              enableShadow
+            />
+
+            <Button
+              label="Sign up for a new account"
+              link
+              color={Colors.primaryColor}
+              onPress={onSignUp}
+              marginB-28
+              center
+              labelStyle={{ fontSize: 15, fontWeight: '600' }}
+            />
+
+            <View row centerV marginB-28>
+              <View flex height={1.5} bg-grey60 style={{ borderRadius: 1 }} />
+              <Text text80 marginH-15 grey30 style={{ fontWeight: '600' }}>OR</Text>
+              <View flex height={1.5} bg-grey60 style={{ borderRadius: 1 }} />
+            </View>
+
+            <Button
+              label={isGoogleLoading ? "Processing..." : "Continue with Google"}
+              onPress={onLoginWithGoogle}
+              backgroundColor={Colors.white}
+              outline
+              outlineColor={Colors.grey50}
+              outlineWidth={1.5}
+              color={Colors.textColor}
+              disabled={isGoogleLoading || isLoading}
+              marginB-20
+              style={{ height: 58, borderRadius: 20 }}
+              labelStyle={{ fontSize: 15, fontWeight: '600' }}
+              iconSource={() => <FontAwesome5 name="google" size={20} color="#DB4437" style={{ marginRight: 12 }} />}
+            />
+          </View>
+
+          <Text text90 center grey40 marginT-10 style={{ lineHeight: 18 }}>
+            By continuing, you agree to our{'\n'}Terms & Conditions
+          </Text>
+        </View>
       </ImageBackground>
-    </KeyboardAvoidingView>
+    </View>
   );
 }

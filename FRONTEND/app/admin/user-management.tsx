@@ -1,10 +1,9 @@
 import { useToast } from '@/components/toast';
 import { useAuth } from '@/hooks/use-auth';
 import { userService } from '@/services';
-import { styles } from '@/styles/admin-user-management-styles';
 import { AdminCreateUserRequest, User } from '@/types/api.types';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -13,14 +12,15 @@ import {
   RefreshControl,
   TextInput,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
-import { Text, View } from 'react-native-ui-lib';
+import { Text, View, Colors, Card } from 'react-native-ui-lib';
 
 export default function AdminUserManagementScreen() {
   const router = useRouter();
   const { user: currentUser } = useAuth();
   const toast = useToast();
-  
+
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -87,7 +87,7 @@ export default function AdminUserManagementScreen() {
 
   const confirmBanUser = async () => {
     if (!selectedUser) return;
-    
+
     setShowBanModal(false);
     try {
       await userService.adminDeleteUser(selectedUser.id);
@@ -152,45 +152,90 @@ export default function AdminUserManagementScreen() {
 
   // Render user item
   const renderUserItem = ({ item }: { item: User }) => (
-    <View style={styles.userCard}>
-      <View style={styles.userAvatar}>
-        {item.picture ? (
-          <Text style={styles.userAvatarText}>
-            {item.name.charAt(0).toUpperCase()}
-          </Text>
-        ) : (
-          <Ionicons name="person" size={32} color="#666" />
-        )}
-      </View>
-      
-      <View style={styles.userInfo}>
-        <Text style={styles.userName}>{item.name}</Text>
-        <Text style={styles.userPhone}>{item.phone}</Text>
-        {item.email && <Text style={styles.userEmail}>{item.email}</Text>}
-        <View style={styles.userRoleBadge}>
-          <Text style={[
-            styles.userRoleText,
-            item.role === 'admin' && styles.adminRoleText
-          ]}>
-            {item.role}
-          </Text>
+    <Card
+      padding-18
+      marginB-16
+      enableShadow
+      style={{ borderRadius: 18 }}
+    >
+      <View row centerV>
+        <View
+          width={56}
+          height={56}
+          center
+          br100
+          marginR-16
+          style={{
+            backgroundColor: item.role === 'admin' ? Colors.primaryColor + '20' : Colors.grey80
+          }}
+        >
+          {item.picture ? (
+            <Text text50 style={{ color: Colors.primaryColor, fontWeight: 'bold' }}>
+              {item.name.charAt(0).toUpperCase()}
+            </Text>
+          ) : (
+            <Ionicons
+              name="person"
+              size={28}
+              color={item.role === 'admin' ? Colors.primaryColor : Colors.grey40}
+            />
+          )}
         </View>
-      </View>
-      
-      <View style={styles.userActions}>
+
+        <View flex>
+          <Text text70 textColor style={{ fontWeight: 'bold' }}>
+            {item.name}
+          </Text>
+          <Text text80 grey40 marginT-4>
+            {item.phone}
+          </Text>
+          {item.email && (
+            <Text text90 grey40 marginT-2>
+              {item.email}
+            </Text>
+          )}
+          <View
+            paddingH-10
+            paddingV-4
+            marginT-8
+            style={{
+              backgroundColor: item.role === 'admin' ? '#FF9500' + '20' : Colors.primaryColor + '20',
+              borderRadius: 10,
+              alignSelf: 'flex-start'
+            }}
+          >
+            <Text
+              text90
+              style={{
+                color: item.role === 'admin' ? '#FF9500' : Colors.primaryColor,
+                fontWeight: 'bold'
+              }}
+            >
+              {item.role}
+            </Text>
+          </View>
+        </View>
+
         <TouchableOpacity
-          style={styles.banButton}
           onPress={() => handleBanUser(item)}
           disabled={item.id === currentUser?.id}
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 12,
+            backgroundColor: item.id === currentUser?.id ? Colors.grey80 : '#FF3B30' + '15',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
         >
-          <Ionicons 
-            name="ban-outline" 
-            size={22} 
-            color={item.id === currentUser?.id ? '#CCC' : '#FF3B30'} 
+          <Ionicons
+            name="ban-outline"
+            size={22}
+            color={item.id === currentUser?.id ? Colors.grey40 : '#FF3B30'}
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </Card>
   );
 
   if (currentUser?.role !== 'admin') {
@@ -198,60 +243,153 @@ export default function AdminUserManagementScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
+    <View flex bg-grey80>
+      <Stack.Screen options={{ headerShown: false }} />
+      <StatusBar barStyle="dark-content" />
+
+      {/* Modern Header */}
+      <View
+        row
+        centerV
+        paddingH-16
+        paddingT-5
+        paddingB-14
+        bg-white
+        style={{
+          borderBottomWidth: 1.5,
+          borderBottomColor: Colors.grey70,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
+          elevation: 3
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 12,
+            backgroundColor: Colors.grey80,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 15
+          }}
+        >
+          <Ionicons name="arrow-back" size={24} color={Colors.textColor} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>User Management</Text>
-        <TouchableOpacity onPress={handleCreateUser} style={styles.headerRight}>
-          <Ionicons name="add-circle" size={28} color="#007AFF" />
+        <Text text40 textColor flex style={{ fontWeight: 'bold' }}>User Management</Text>
+        <TouchableOpacity
+          onPress={handleCreateUser}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 12,
+            backgroundColor: Colors.primaryColor + '20',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <Ionicons name="add" size={28} color={Colors.primaryColor} />
         </TouchableOpacity>
       </View>
 
       {/* Stats */}
-      <View style={styles.statsContainer}>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{users.length}</Text>
-          <Text style={styles.statLabel}>Total Users</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>
+      <View
+        row
+        paddingH-20
+        paddingV-20
+        bg-white
+        marginB-4
+        style={{ gap: 12 }}
+      >
+        <Card
+          flex
+          center
+          paddingV-18
+          enableShadow
+          style={{ borderRadius: 16 }}
+        >
+          <Text text40 primaryColor style={{ fontWeight: 'bold' }}>
+            {users.length}
+          </Text>
+          <Text text80 grey40 marginT-6 style={{ fontWeight: '600' }}>
+            Total Users
+          </Text>
+        </Card>
+
+        <Card
+          flex
+          center
+          paddingV-18
+          enableShadow
+          style={{ borderRadius: 16 }}
+        >
+          <Text text40 style={{ color: '#FF9500', fontWeight: 'bold' }}>
             {users.filter(u => u.role === 'admin').length}
           </Text>
-          <Text style={styles.statLabel}>Admins</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>
+          <Text text80 grey40 marginT-6 style={{ fontWeight: '600' }}>
+            Admins
+          </Text>
+        </Card>
+
+        <Card
+          flex
+          center
+          paddingV-18
+          enableShadow
+          style={{ borderRadius: 16 }}
+        >
+          <Text text40 style={{ color: '#007AFF', fontWeight: 'bold' }}>
             {users.filter(u => u.role === 'customer').length}
           </Text>
-          <Text style={styles.statLabel}>Customers</Text>
-        </View>
+          <Text text80 grey40 marginT-6 style={{ fontWeight: '600' }}>
+            Customers
+          </Text>
+        </Card>
       </View>
 
       {/* User List */}
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
+        <View flex center>
+          <ActivityIndicator size="large" color={Colors.primaryColor} />
+          <Text text70 grey40 marginT-15 style={{ fontWeight: '500' }}>Loading users...</Text>
         </View>
       ) : (
         <FlatList
           data={users}
           keyExtractor={(item) => item.id}
           renderItem={renderUserItem}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={{ paddingTop: 16, paddingHorizontal: 16, paddingBottom: 100 }}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.primaryColor]} />
           }
           ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Ionicons name="people-outline" size={64} color="#CCC" />
-              <Text style={styles.emptyText}>No users found</Text>
+            <View flex center paddingH-40 marginT-60>
+              <View
+                width={120}
+                height={120}
+                center
+                br100
+                bg-white
+                marginB-25
+                style={{
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 8,
+                  elevation: 4
+                }}
+              >
+                <Ionicons name="people-outline" size={60} color={Colors.grey40} />
+              </View>
+              <Text text50 textColor center style={{ fontWeight: 'bold' }}>No users found</Text>
             </View>
           }
         />
       )}
+
       {/* Ban Confirmation Modal */}
       <Modal
         visible={showBanModal}
@@ -259,29 +397,76 @@ export default function AdminUserManagementScreen() {
         animationType="fade"
         onRequestClose={() => setShowBanModal(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Ban User</Text>
-            <Text style={styles.modalMessage}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 30 }}>
+          <View style={{
+            backgroundColor: 'white',
+            borderRadius: 24,
+            paddingHorizontal: 24,
+            paddingVertical: 30,
+            width: '100%',
+            maxWidth: 400,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.15,
+            shadowRadius: 16,
+            elevation: 8
+          }}>
+            <View
+              width={70}
+              height={70}
+              center
+              br100
+              marginB-20
+              style={{
+                backgroundColor: '#FF3B30' + '15',
+                alignSelf: 'center'
+              }}
+            >
+              <Ionicons name="ban" size={40} color="#FF3B30" />
+            </View>
+
+            <Text text50 textColor center marginB-12 style={{ fontWeight: 'bold' }}>
+              Ban User
+            </Text>
+            <Text text70 grey40 center marginB-30 style={{ lineHeight: 24 }}>
               Are you sure you want to ban user "{selectedUser?.name}"?
             </Text>
-            
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.cancelButton]}
+
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              <TouchableOpacity
                 onPress={() => {
                   setShowBanModal(false);
                   setSelectedUser(null);
                 }}
+                activeOpacity={0.7}
+                style={{
+                  flex: 1,
+                  paddingVertical: 14,
+                  borderRadius: 14,
+                  backgroundColor: Colors.grey80,
+                  alignItems: 'center'
+                }}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text text70 textColor style={{ fontWeight: 'bold' }}>Cancel</Text>
               </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.modalButton, { backgroundColor: '#E74C3C' }]}
+
+              <TouchableOpacity
                 onPress={confirmBanUser}
+                activeOpacity={0.7}
+                style={{
+                  flex: 1,
+                  paddingVertical: 14,
+                  borderRadius: 14,
+                  backgroundColor: '#FF3B30',
+                  alignItems: 'center',
+                  shadowColor: '#FF3B30',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 6
+                }}
               >
-                <Text style={styles.banButtonText}>Ban</Text>
+                <Text text70 white style={{ fontWeight: 'bold' }}>Ban</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -295,94 +480,135 @@ export default function AdminUserManagementScreen() {
         animationType="slide"
         onRequestClose={() => setShowCreateModal(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, styles.createModalContent]}>
-            <Text style={styles.modalTitle}>Create New User</Text>
-            
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
+          <View style={{ backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, maxHeight: '85%' }}>
+            <Text text60 textColor style={{ fontWeight: 'bold', marginBottom: 24 }}>Create New User</Text>
+
             {/* Phone Input */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Phone *</Text>
+            <View style={{ marginBottom: 16 }}>
+              <Text text80 textColor style={{ fontWeight: '600', marginBottom: 8 }}>Phone *</Text>
               <TextInput
-                style={styles.input}
+                style={{
+                  backgroundColor: Colors.grey80,
+                  paddingHorizontal: 16,
+                  paddingVertical: 14,
+                  borderRadius: 14,
+                  fontSize: 15,
+                  color: Colors.textColor
+                }}
                 placeholder="Enter phone number"
+                placeholderTextColor={Colors.grey50}
                 value={createForm.phone}
-                onChangeText={(text) => setCreateForm({...createForm, phone: text})}
+                onChangeText={(text) => setCreateForm({ ...createForm, phone: text })}
                 keyboardType="phone-pad"
               />
             </View>
 
             {/* Name Input */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Name *</Text>
+            <View style={{ marginBottom: 16 }}>
+              <Text text80 textColor style={{ fontWeight: '600', marginBottom: 8 }}>Name *</Text>
               <TextInput
-                style={styles.input}
+                style={{
+                  backgroundColor: Colors.grey80,
+                  paddingHorizontal: 16,
+                  paddingVertical: 14,
+                  borderRadius: 14,
+                  fontSize: 15,
+                  color: Colors.textColor
+                }}
                 placeholder="Enter full name"
+                placeholderTextColor={Colors.grey50}
                 value={createForm.name}
-                onChangeText={(text) => setCreateForm({...createForm, name: text})}
+                onChangeText={(text) => setCreateForm({ ...createForm, name: text })}
               />
             </View>
 
             {/* Password Input */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Password *</Text>
+            <View style={{ marginBottom: 16 }}>
+              <Text text80 textColor style={{ fontWeight: '600', marginBottom: 8 }}>Password *</Text>
               <TextInput
-                style={styles.input}
+                style={{
+                  backgroundColor: Colors.grey80,
+                  paddingHorizontal: 16,
+                  paddingVertical: 14,
+                  borderRadius: 14,
+                  fontSize: 15,
+                  color: Colors.textColor
+                }}
                 placeholder="Enter password"
+                placeholderTextColor={Colors.grey50}
                 value={createForm.password}
-                onChangeText={(text) => setCreateForm({...createForm, password: text})}
+                onChangeText={(text) => setCreateForm({ ...createForm, password: text })}
                 secureTextEntry
               />
             </View>
 
             {/* Role Selector */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Role *</Text>
-              <View style={styles.roleSelector}>
+            <View style={{ marginBottom: 24 }}>
+              <Text text80 textColor style={{ fontWeight: '600', marginBottom: 8 }}>Role *</Text>
+              <View style={{ flexDirection: 'row', gap: 12 }}>
                 <TouchableOpacity
-                  style={[
-                    styles.roleButton,
-                    createForm.role === 'customer' && styles.roleButtonActive
-                  ]}
-                  onPress={() => setCreateForm({...createForm, role: 'customer'})}
+                  style={{
+                    flex: 1,
+                    paddingVertical: 14,
+                    borderRadius: 14,
+                    backgroundColor: createForm.role === 'customer' ? Colors.primaryColor : Colors.grey80,
+                    alignItems: 'center'
+                  }}
+                  onPress={() => setCreateForm({ ...createForm, role: 'customer' })}
                 >
-                  <Text style={[
-                    styles.roleButtonText,
-                    createForm.role === 'customer' && styles.roleButtonTextActive
-                  ]}>
+                  <Text
+                    text70
+                    style={{
+                      color: createForm.role === 'customer' ? 'white' : Colors.textColor,
+                      fontWeight: 'bold'
+                    }}
+                  >
                     Customer
                   </Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity
-                  style={[
-                    styles.roleButton,
-                    createForm.role === 'admin' && styles.roleButtonActive
-                  ]}
-                  onPress={() => setCreateForm({...createForm, role: 'admin'})}
+                  onPress={() => setCreateForm({ ...createForm, role: 'admin' })}
+                  style={{
+                    flex: 1,
+                    paddingVertical: 14,
+                    borderRadius: 14,
+                    backgroundColor: createForm.role === 'admin' ? Colors.primaryColor : Colors.grey80,
+                    alignItems: 'center'
+                  }}
                 >
-                  <Text style={[
-                    styles.roleButtonText,
-                    createForm.role === 'admin' && styles.roleButtonTextActive
-                  ]}>
+                  <Text
+                    text70
+                    style={{
+                      color: createForm.role === 'admin' ? 'white' : Colors.textColor,
+                      fontWeight: 'bold'
+                    }}
+                  >
                     Admin
                   </Text>
                 </TouchableOpacity>
               </View>
-            </View>
-            
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setShowCreateModal(false)}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.modalButton, { backgroundColor: '#007AFF' }]}
+
+              {/* Create Button */}
+              <TouchableOpacity
                 onPress={confirmCreateUser}
+                activeOpacity={0.7}
+                style={{
+                  paddingVertical: 16,
+                  borderRadius: 16,
+                  backgroundColor: Colors.primaryColor,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  shadowColor: Colors.primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 6,
+                  marginBottom: 20
+                }}
               >
-                <Text style={styles.banButtonText}>Create</Text>
+                <Text text70 white style={{ fontWeight: 'bold' }}>Create User</Text>
               </TouchableOpacity>
             </View>
           </View>

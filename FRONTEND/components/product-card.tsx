@@ -3,7 +3,8 @@ import type { Product } from '@/types/api.types';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { View, Text, Card, Button, Colors, Image as UILibImage } from 'react-native-ui-lib';
+import { Image, TouchableOpacity } from 'react-native';
 import { styles } from '../styles/product-card-styles';
 
 interface ProductCardProps {
@@ -18,7 +19,7 @@ interface ProductCardProps {
   onFavoriteChange?: () => void;
 }
 
-export default function ProductCard({ 
+export default function ProductCard({
   product,
   name,
   price,
@@ -46,7 +47,7 @@ export default function ProductCard({
 
   const checkFavoriteStatus = async () => {
     if (!productId) return;
-    
+
     try {
       const status = await favoriteService.checkFavorite(productId);
       setIsFavorite(status);
@@ -57,14 +58,14 @@ export default function ProductCard({
 
   const handleToggleFavorite = async (e: any) => {
     e.stopPropagation();
-    
+
     if (!productId) return;
-    
+
     setCheckingFavorite(true);
     try {
       await favoriteService.toggleFavorite(productId, isFavorite);
       setIsFavorite(!isFavorite);
-      
+
       if (onFavoriteChange) {
         onFavoriteChange();
       }
@@ -84,43 +85,107 @@ export default function ProductCard({
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress}>
-      <View style={styles.imageContainer}>
-        <Image source={displayImage} style={styles.image} resizeMode="contain" />
-        
+    <Card
+      marginB-18
+      style={{
+        borderRadius: 20,
+        overflow: 'hidden',
+        backgroundColor: Colors.white,
+        elevation: 4,
+        shadowColor: Colors.grey10,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      }}
+      onPress={handlePress}
+    >
+      {/* Image Container */}
+      <View style={{ height: 180, backgroundColor: Colors.grey80, position: 'relative' }}>
+        <Image source={displayImage} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+
+        {/* Gradient Overlay */}
+        <View
+          absB
+          left
+          right
+          height={60}
+          style={{
+            background: 'linear-gradient(to top, rgba(0,0,0,0.3), transparent)',
+          }}
+        />
+
         {showFavoriteButton && (
-          <TouchableOpacity 
-            style={styles.favoriteButton}
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              top: 12,
+              right: 12,
+              backgroundColor: 'rgba(255,255,255,0.95)',
+              padding: 10,
+              borderRadius: 25,
+              elevation: 3,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 4,
+            }}
             onPress={handleToggleFavorite}
             disabled={checkingFavorite}
           >
-            <Ionicons 
-              name={isFavorite ? "heart" : "heart-outline"} 
-              size={20} 
-              color={isFavorite ? "#ff3b30" : "#666"} 
+            <Ionicons
+              name={isFavorite ? "heart" : "heart-outline"}
+              size={20}
+              color={isFavorite ? Colors.red30 : Colors.grey20}
             />
           </TouchableOpacity>
         )}
       </View>
-      
-      <View style={styles.infoContainer}>
-        <Text style={styles.name} numberOfLines={2}>{displayName}</Text>
-        <Text style={styles.price}>{displayPrice}</Text>
-        
-        {(rating !== undefined || sold !== undefined) && (
-          <View style={styles.ratingContainer}>
-            {rating !== undefined && (
-              <View style={styles.ratingBox}>
-                <Ionicons name="star" size={14} color="#FFB800" />
-                <Text style={styles.ratingText}>{rating.toFixed(1)}</Text>
-              </View>
-            )}
-            {sold !== undefined && (
-              <Text style={styles.soldText}>Terjual {sold}</Text>
-            )}
+
+      {/* Content */}
+      <View padding-15>
+        <Text text70 numberOfLines={2} textColor style={{ fontWeight: '600', lineHeight: 22 }}>
+          {displayName}
+        </Text>
+
+        <View row spread centerV marginT-10>
+          <View>
+            <Text text80 primaryColor style={{ fontWeight: 'bold', fontSize: 17 }}>
+              {displayPrice}
+            </Text>
           </View>
+
+          {(rating !== undefined || sold !== undefined) && (
+            <View row centerV>
+              {rating !== undefined && (
+                <View
+                  row
+                  centerV
+                  paddingH-8
+                  paddingV-4
+                  br100
+                  style={{ backgroundColor: '#FFF9E6' }}
+                >
+                  <Ionicons name="star" size={14} color="#FFB800" />
+                  <Text text90 marginL-4 style={{ color: '#FF8C00', fontWeight: '700' }}>
+                    {rating.toFixed(1)}
+                  </Text>
+                </View>
+              )}
+              {sold !== undefined && rating === undefined && (
+                <Text text90 grey40 style={{ fontWeight: '500' }}>
+                  Sold {sold}
+                </Text>
+              )}
+            </View>
+          )}
+        </View>
+
+        {sold !== undefined && rating !== undefined && (
+          <Text text90 grey40 marginT-6 style={{ fontWeight: '500' }}>
+            {sold} sold
+          </Text>
         )}
       </View>
-    </TouchableOpacity>
+    </Card>
   );
 }

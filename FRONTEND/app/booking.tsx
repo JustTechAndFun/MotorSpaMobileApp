@@ -9,8 +9,9 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
-import { Text, View } from 'react-native-ui-lib';
+import { Text, View, Button, Colors, Spacings, Card } from 'react-native-ui-lib';
 import { bookingService, locationService } from '../services';
 import { styles } from '../styles/booking-styles';
 import { BookingService, MotorService, StoreLocation } from '../types/api.types';
@@ -27,12 +28,12 @@ interface SelectedService extends BookingService {
 export default function BookingScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ services?: string }>();
-  
+
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>([]);
   const [locations, setLocations] = useState<StoreLocation[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<StoreLocation | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<Date | null>(null);
   const [showPickerMode, setShowPickerMode] = useState<null | 'date' | 'time'>(null);
@@ -61,7 +62,7 @@ export default function BookingScreen() {
       setLoading(true);
       const data = await locationService.getActiveLocations();
       setLocations(data);
-      
+
       if (data.length > 0) {
         setSelectedLocation(data[0]);
       }
@@ -166,100 +167,96 @@ export default function BookingScreen() {
   }
 
   return (
-    <View style={styles.screen}>
+    <View flex bg-grey80>
+      <StatusBar barStyle="dark-content" />
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.back} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+      <View row centerV paddingH-20 paddingT-15 paddingB-15 bg-white style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey70 }}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color={Colors.textColor} />
         </TouchableOpacity>
-        <Text style={styles.title}>Đặt lịch dịch vụ</Text>
-        <View style={{ width: 40 }} />
+        <Text h5 marginL-20 textColor style={{ fontWeight: '700' }}>Book Service</Text>
       </View>
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* Selected Services */}
-        <View style={styles.card}>
-          <View style={styles.serviceHeader}>
-            <Text style={styles.label}>Dịch vụ đã chọn</Text>
+        <Card padding-20 marginB-20 bg-white style={{ borderRadius: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }}>
+          <View row spread centerV marginB-15>
+            <Text bodyStrong textColor style={{ fontSize: 18, fontWeight: '700' }}>Selected Services</Text>
             <TouchableOpacity onPress={() => router.back()}>
-              <Text style={{ color: '#82b440', fontSize: 14 }}>Chỉnh sửa</Text>
+              <Text primaryColor style={{ fontWeight: '600' }}>Edit</Text>
             </TouchableOpacity>
           </View>
-          
+
           {selectedServices.map((item, index) => {
             const finalPrice = item.service.discountPercentage > 0
               ? item.service.price * (1 - item.service.discountPercentage / 100)
               : item.service.price;
 
             return (
-              <View key={index} style={styles.selectedServiceItem}>
+              <View key={index} row centerV marginB-15 paddingB-15 style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey70 }}>
                 <Image
                   source={{ uri: item.service.imageUrl || 'https://via.placeholder.com/60' }}
-                  style={styles.selectedServiceImage}
+                  style={{ width: 60, height: 60, borderRadius: 12 }}
                 />
-                <View style={styles.selectedServiceInfo}>
-                  <Text style={styles.selectedServiceName}>{item.service.name}</Text>
-                  <Text style={styles.selectedServicePrice}>
+                <View flex marginL-15>
+                  <Text body textColor style={{ fontWeight: '600' }}>{item.service.name}</Text>
+                  <Text bodySmall primaryColor style={{ fontWeight: '700' }}>
                     {formatCurrency(finalPrice)} VNĐ
                   </Text>
                 </View>
               </View>
             );
           })}
-          
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Tổng cộng:</Text>
-            <Text style={styles.totalPrice}>{formatCurrency(getTotalAmount())} VNĐ</Text>
+
+          <View row spread marginT-10>
+            <Text body textColor style={{ fontWeight: '600' }}>Total Amount</Text>
+            <Text h6 primaryColor style={{ fontWeight: '800' }}>{formatCurrency(getTotalAmount())} VNĐ</Text>
           </View>
-        </View>
+        </Card>
 
         {/* Location Selection */}
-        <View style={styles.card}>
-          <Text style={styles.label}>Chọn cửa hàng</Text>
+        <Card padding-20 marginB-20 bg-white style={{ borderRadius: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }}>
+          <Text bodyStrong textColor marginB-15 style={{ fontSize: 18, fontWeight: '700' }}>Choose Location</Text>
           {locations.length === 0 ? (
-            <View style={styles.emptyLocation}>
-              <Ionicons name="warning-outline" size={24} color="#FF9500" />
-              <Text style={{ color: '#999', marginLeft: 8 }}>
-                Chưa có cửa hàng nào hoạt động
-              </Text>
+            <View row centerV bg-orange80 padding-15 style={{ borderRadius: 12 }}>
+              <Ionicons name="warning-outline" size={20} color={Colors.orange30} />
+              <Text marginL-10 grey30>No stores currently available</Text>
             </View>
           ) : (
-            <>
+            <View>
               {locations.map((loc) => (
                 <TouchableOpacity
                   key={loc.id}
-                  style={[
-                    styles.locationItem,
-                    selectedLocation?.id === loc.id && styles.locationItemSelected,
-                  ]}
                   onPress={() => setSelectedLocation(loc)}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 15,
+                    borderRadius: 15,
+                    marginBottom: 10,
+                    borderWidth: 2,
+                    borderColor: selectedLocation?.id === loc.id ? Colors.primaryColor : Colors.grey70,
+                    backgroundColor: selectedLocation?.id === loc.id ? Colors.indigo80 : 'white',
+                  }}
                 >
                   <Ionicons
                     name={selectedLocation?.id === loc.id ? 'radio-button-on' : 'radio-button-off'}
-                    size={20}
-                    color={selectedLocation?.id === loc.id ? '#82b440' : '#999'}
+                    size={22}
+                    color={selectedLocation?.id === loc.id ? Colors.primaryColor : Colors.grey30}
                   />
-                  <View style={{ flex: 1, marginLeft: 12 }}>
-                    <Text style={styles.locationName}>{loc.name}</Text>
-                    <Text style={styles.locationPhone}>{loc.phone}</Text>
-                    <Text style={styles.locationAddress} numberOfLines={2}>
-                      {loc.address}
-                    </Text>
-                    {loc.description && (
-                      <Text style={styles.locationDescription} numberOfLines={1}>
-                        {loc.description}
-                      </Text>
-                    )}
+                  <View flex marginL-12>
+                    <Text body textColor style={{ fontWeight: selectedLocation?.id === loc.id ? '700' : '600' }}>{loc.name}</Text>
+                    <Text bodySmall grey40 marginT-2>{loc.address}</Text>
                   </View>
                 </TouchableOpacity>
               ))}
-            </>
+            </View>
           )}
-        </View>
+        </Card>
 
         {/* Date Selection */}
-        <View style={styles.card}>
-          <Text style={styles.label}>Chọn ngày</Text>
+        <Card padding-20 marginB-20 bg-white style={{ borderRadius: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }}>
+          <Text bodyStrong textColor marginB-15 style={{ fontSize: 18, fontWeight: '700' }}>Schedule Date</Text>
           {Platform.OS === 'web' ? (
             <input
               type="date"
@@ -268,17 +265,32 @@ export default function BookingScreen() {
                 const d = new Date(e.target.value + 'T00:00:00');
                 if (!isNaN(d.getTime())) setDate(d);
               }}
-              style={{ padding: 12, borderRadius: 8, border: '1px solid #e0e0e0', fontSize: 14 }}
+              style={{
+                width: '100%',
+                padding: 15,
+                borderRadius: 12,
+                border: `1px solid ${Colors.grey70}`,
+                backgroundColor: 'white',
+                fontSize: 16,
+                color: Colors.textColor,
+                outline: 'none'
+              }}
             />
           ) : (
             <>
               <TouchableOpacity
-                style={styles.inputButton}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: 15,
+                  borderRadius: 12,
+                  backgroundColor: Colors.grey70,
+                }}
                 onPress={() => setShowPickerMode('date')}
               >
-                <Ionicons name="calendar" size={18} color="#555" />
-                <Text style={styles.inputText}>
-                  {date ? date.toLocaleDateString('vi-VN') : 'Chọn ngày'}
+                <Ionicons name="calendar-outline" size={20} color={Colors.primaryColor} />
+                <Text marginL-12 textColor style={{ fontSize: 16 }}>
+                  {date ? date.toLocaleDateString('vi-VN') : 'Select date'}
                 </Text>
               </TouchableOpacity>
               {showPickerMode === 'date' && DateTimePicker && (
@@ -293,11 +305,11 @@ export default function BookingScreen() {
               )}
             </>
           )}
-        </View>
+        </Card>
 
         {/* Time Selection */}
-        <View style={styles.card}>
-          <Text style={styles.label}>Chọn giờ</Text>
+        <Card padding-20 marginB-20 bg-white style={{ borderRadius: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }}>
+          <Text bodyStrong textColor marginB-15 style={{ fontSize: 18, fontWeight: '700' }}>Schedule Time</Text>
           {Platform.OS === 'web' ? (
             <input
               type="time"
@@ -308,17 +320,32 @@ export default function BookingScreen() {
                 t.setHours(parseInt(h), parseInt(m), 0, 0);
                 setTime(t);
               }}
-              style={{ padding: 12, borderRadius: 8, border: '1px solid #e0e0e0', fontSize: 14 }}
+              style={{
+                width: '100%',
+                padding: 15,
+                borderRadius: 12,
+                border: `1px solid ${Colors.grey70}`,
+                backgroundColor: 'white',
+                fontSize: 16,
+                color: Colors.textColor,
+                outline: 'none'
+              }}
             />
           ) : (
             <>
               <TouchableOpacity
-                style={styles.inputButton}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: 15,
+                  borderRadius: 12,
+                  backgroundColor: Colors.grey70,
+                }}
                 onPress={() => setShowPickerMode('time')}
               >
-                <Ionicons name="time" size={18} color="#555" />
-                <Text style={styles.inputText}>
-                  {time ? `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}` : 'Chọn giờ'}
+                <Ionicons name="time-outline" size={20} color={Colors.primaryColor} />
+                <Text marginL-12 textColor style={{ fontSize: 16 }}>
+                  {time ? `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}` : 'Select time'}
                 </Text>
               </TouchableOpacity>
               {showPickerMode === 'time' && DateTimePicker && (
@@ -331,41 +358,43 @@ export default function BookingScreen() {
               )}
             </>
           )}
-        </View>
+        </Card>
 
         {/* Notes */}
-        <View style={styles.card}>
-          <Text style={styles.label}>Ghi chú (tùy chọn)</Text>
+        <Card padding-20 marginB-30 bg-white style={{ borderRadius: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }}>
+          <Text bodyStrong textColor marginB-15 style={{ fontSize: 18, fontWeight: '700' }}>Notes (Optional)</Text>
           <TextInput
-            style={styles.notesInput}
-            placeholder="Thêm ghi chú cho booking..."
+            style={{
+              backgroundColor: Colors.grey70,
+              borderRadius: 15,
+              padding: 15,
+              height: 100,
+              fontSize: 16,
+              color: Colors.textColor,
+              textAlignVertical: 'top'
+            }}
+            placeholder="Add special requests..."
+            placeholderTextColor={Colors.grey40}
             multiline
             numberOfLines={3}
             value={notes}
             onChangeText={setNotes}
-            textAlignVertical="top"
           />
-        </View>
+        </Card>
 
         {/* Submit Button */}
-        <TouchableOpacity
-          style={[styles.submitButton, submitting && { opacity: 0.6 }]}
+        <Button
+          label={submitting ? "Processing..." : `Confirm Booking • ${formatCurrency(getTotalAmount())} VNĐ`}
+          backgroundColor={Colors.primaryColor}
+          size="large"
+          borderRadius={18}
+          marginB-40
           onPress={handleSubmit}
           disabled={submitting}
-        >
-          {submitting ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <FontAwesome5 name="calendar-check" size={18} color="#fff" />
-              <Text style={styles.submitButtonText}>
-                Xác nhận đặt lịch • {formatCurrency(getTotalAmount())} VNĐ
-              </Text>
-            </>
-          )}
-        </TouchableOpacity>
-
-        <View style={{ height: 40 }} />
+          labelStyle={{ fontWeight: '800', fontSize: 16 }}
+          iconSource={() => !submitting && <FontAwesome5 name="calendar-check" size={18} color="#fff" style={{ marginRight: 10 }} />}
+          enableShadow
+        />
       </ScrollView>
     </View>
   );

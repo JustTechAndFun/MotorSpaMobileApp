@@ -7,12 +7,18 @@ export const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
+    backgroundColor: '#F1F5F9', // Matching screenBG
   },
   scrollView: {
     flex: 1,
   },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 10,
+  },
   row: {
     width: '100%',
+    marginBottom: 20,
   },
   bottomPadding: {
     height: 80,
@@ -25,7 +31,6 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   productsSection: {
-    paddingHorizontal: 16,
     paddingVertical: 20,
   },
   sectionTitle: {

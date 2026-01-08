@@ -1,51 +1,64 @@
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   RefreshControl,
-  SafeAreaView,
   ScrollView,
-  Text,
   TextInput,
   TouchableOpacity,
-  View
+  StatusBar,
 } from 'react-native';
+import { Text, View, Colors, Card } from 'react-native-ui-lib';
 import { qnaService } from '../services';
-import { styles } from '../styles/help-styles';
 import { QnAMessage } from '../types/api.types';
-
-const COLORS = {
-  LIGHT_GREEN: '#E6EAE0',
-  MEDIUM_GREEN: '#D6E2D0',
-  DARK_GREEN: '#387A4C',
-};
 
 const FAQItem = ({ question, answer, isInitiallyOpen = false }: any) => {
   const [isOpen, setIsOpen] = useState(isInitiallyOpen);
 
   return (
-    <View style={styles.faqContainer}>
+    <Card
+      padding-18
+      marginB-12
+      enableShadow
+      style={{ borderRadius: 16 }}
+    >
       <TouchableOpacity
-        style={[styles.faqQuestionBar, isOpen && styles.faqQuestionBarOpen]}
         onPress={() => setIsOpen(!isOpen)}
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
       >
-        <Text style={styles.faqQuestionText}>{question}</Text>
-        <Ionicons name={isOpen ? 'chevron-up' : 'chevron-forward'} size={20} color={COLORS.DARK_GREEN} />
+        <Text text70 textColor flex style={{ fontWeight: 'bold', marginRight: 12 }}>
+          {question}
+        </Text>
+        <View
+          width={32}
+          height={32}
+          center
+          br100
+          style={{ backgroundColor: Colors.primaryColor + '20' }}
+        >
+          <Ionicons
+            name={isOpen ? 'chevron-up' : 'chevron-down'}
+            size={20}
+            color={Colors.primaryColor}
+          />
+        </View>
       </TouchableOpacity>
       {isOpen && (
-        <View style={styles.faqAnswer}>
-          <Text style={styles.faqAnswerText}>{answer}</Text>
+        <View marginT-14 paddingT-14 style={{ borderTopWidth: 1, borderTopColor: Colors.grey80 }}>
+          <Text text80 grey30 style={{ lineHeight: 24 }}>
+            {answer}
+          </Text>
         </View>
       )}
-    </View>
+    </Card>
   );
 };
 
 export default function HelpCenterScreen() {
   const router = useRouter();
-  
+
   const [activeTab, setActiveTab] = useState<'faq' | 'contact' | 'messages'>('faq');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -64,7 +77,7 @@ export default function HelpCenterScreen() {
     try {
       setLoading(true);
       const data = await qnaService.getMyMessages();
-      setMyMessages(data.sort((a, b) => 
+      setMyMessages(data.sort((a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       ));
     } catch (error: any) {
@@ -143,10 +156,29 @@ export default function HelpCenterScreen() {
   ];
 
   return (
-    <SafeAreaView style={styles.screenContainer}>
-      <View style={styles.header}>
+    <View flex bg-grey80>
+      <Stack.Screen options={{ headerShown: false }} />
+      <StatusBar barStyle="dark-content" />
+
+      {/* Modern Header */}
+      <View
+        row
+        centerV
+        paddingH-20
+        paddingT-15
+        paddingB-18
+        bg-white
+        style={{
+          borderBottomWidth: 1.5,
+          borderBottomColor: Colors.grey70,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
+          elevation: 3
+        }}
+      >
         <TouchableOpacity
-          style={styles.backButton}
           onPress={() => {
             try {
               router.back();
@@ -158,54 +190,121 @@ export default function HelpCenterScreen() {
               }
             }
           }}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 12,
+            backgroundColor: Colors.grey80,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 15
+          }}
         >
-          <FontAwesome5 name="arrow-left" size={18} color="#333" />
+          <Ionicons name="arrow-back" size={24} color={Colors.textColor} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Help Center</Text>
-        <View style={styles.placeholder} />
+        <Text text40 textColor style={{ fontWeight: 'bold' }}>Help Center</Text>
       </View>
 
-      {/* Tabs */}
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity 
-          style={[styles.tab, activeTab === 'faq' && styles.tabActive]}
+      {/* Modern Tabs */}
+      <View
+        row
+        bg-white
+        paddingH-20
+        paddingV-12
+        style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey80 }}
+      >
+        <TouchableOpacity
           onPress={() => setActiveTab('faq')}
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            paddingVertical: 10,
+            borderBottomWidth: activeTab === 'faq' ? 3 : 0,
+            borderBottomColor: Colors.primaryColor
+          }}
         >
-          <Ionicons name="help-circle-outline" size={20} color={activeTab === 'faq' ? '#82b440' : '#666'} />
-          <Text style={[styles.tabText, activeTab === 'faq' && styles.tabTextActive]}>
+          <Ionicons
+            name="help-circle-outline"
+            size={22}
+            color={activeTab === 'faq' ? Colors.primaryColor : Colors.grey40}
+          />
+          <Text
+            text80
+            marginT-6
+            style={{
+              color: activeTab === 'faq' ? Colors.primaryColor : Colors.grey40,
+              fontWeight: activeTab === 'faq' ? 'bold' : '600'
+            }}
+          >
             FAQ
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.tab, activeTab === 'contact' && styles.tabActive]}
+
+        <TouchableOpacity
           onPress={() => setActiveTab('contact')}
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            paddingVertical: 10,
+            borderBottomWidth: activeTab === 'contact' ? 3 : 0,
+            borderBottomColor: Colors.primaryColor
+          }}
         >
-          <Ionicons name="mail-outline" size={20} color={activeTab === 'contact' ? '#82b440' : '#666'} />
-          <Text style={[styles.tabText, activeTab === 'contact' && styles.tabTextActive]}>
+          <Ionicons
+            name="mail-outline"
+            size={22}
+            color={activeTab === 'contact' ? Colors.primaryColor : Colors.grey40}
+          />
+          <Text
+            text80
+            marginT-6
+            style={{
+              color: activeTab === 'contact' ? Colors.primaryColor : Colors.grey40,
+              fontWeight: activeTab === 'contact' ? 'bold' : '600'
+            }}
+          >
             Liên hệ
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.tab, activeTab === 'messages' && styles.tabActive]}
+
+        <TouchableOpacity
           onPress={() => setActiveTab('messages')}
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            paddingVertical: 10,
+            borderBottomWidth: activeTab === 'messages' ? 3 : 0,
+            borderBottomColor: Colors.primaryColor
+          }}
         >
-          <Ionicons name="chatbubbles-outline" size={20} color={activeTab === 'messages' ? '#82b440' : '#666'} />
-          <Text style={[styles.tabText, activeTab === 'messages' && styles.tabTextActive]}>
+          <Ionicons
+            name="chatbubbles-outline"
+            size={22}
+            color={activeTab === 'messages' ? Colors.primaryColor : Colors.grey40}
+          />
+          <Text
+            text80
+            marginT-6
+            style={{
+              color: activeTab === 'messages' ? Colors.primaryColor : Colors.grey40,
+              fontWeight: activeTab === 'messages' ? 'bold' : '600'
+            }}
+          >
             Tin nhắn
           </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.mainContentContainer}>
+      <View flex>
         {activeTab === 'faq' && (
-          <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Text style={styles.faqTitle}>Câu hỏi thường gặp</Text>
+          <ScrollView contentContainerStyle={{ paddingTop: 20, paddingHorizontal: 20, paddingBottom: 100 }}>
+            <Text text60 textColor style={{ fontWeight: 'bold', marginBottom: 20 }}>Câu hỏi thường gặp</Text>
             {faqData.map((item) => (
-              <FAQItem 
-                key={item.id} 
-                question={`${item.id}. ${item.question}`} 
-                answer={item.answer} 
-                isInitiallyOpen={item.isInitiallyOpen} 
+              <FAQItem
+                key={item.id}
+                question={`${item.id}. ${item.question}`}
+                answer={item.answer}
+                isInitiallyOpen={item.isInitiallyOpen}
               />
             ))}
             <View style={{ height: 20 }} />
@@ -213,44 +312,72 @@ export default function HelpCenterScreen() {
         )}
 
         {activeTab === 'contact' && (
-          <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Text style={styles.contactFormTitle}>Gửi câu hỏi</Text>
-            <Text style={styles.contactFormDesc}>
+          <ScrollView contentContainerStyle={{ paddingTop: 20, paddingHorizontal: 20, paddingBottom: 100 }}>
+            <Text text60 textColor style={{ fontWeight: 'bold', marginBottom: 12 }}>Gửi câu hỏi</Text>
+            <Text text80 grey40 style={{ marginBottom: 24 }}>
               Gửi câu hỏi của bạn và chúng tôi sẽ phản hồi sớm nhất có thể
             </Text>
 
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Tiêu đề *</Text>
+            <View style={{ marginBottom: 16 }}>
+              <Text text80 textColor style={{ fontWeight: '600', marginBottom: 8 }}>Tiêu đề *</Text>
               <TextInput
-                style={styles.formInput}
+                style={{
+                  backgroundColor: 'white',
+                  paddingHorizontal: 16,
+                  paddingVertical: 14,
+                  borderRadius: 14,
+                  fontSize: 15,
+                  color: Colors.textColor
+                }}
                 placeholder="Ví dụ: Hỏi về sản phẩm"
+                placeholderTextColor={Colors.grey50}
                 value={subject}
                 onChangeText={setSubject}
               />
             </View>
 
-            <View style={styles.formGroup}>
-              <Text style={styles.formLabel}>Nội dung *</Text>
+            <View style={{ marginBottom: 24 }}>
+              <Text text80 textColor style={{ fontWeight: '600', marginBottom: 8 }}>Nội dung *</Text>
               <TextInput
-                style={[styles.formInput, styles.formTextArea]}
+                style={{
+                  backgroundColor: 'white',
+                  paddingHorizontal: 16,
+                  paddingVertical: 14,
+                  borderRadius: 14,
+                  fontSize: 15,
+                  color: Colors.textColor,
+                  minHeight: 140,
+                  textAlignVertical: 'top'
+                }}
                 placeholder="Nhập nội dung câu hỏi của bạn..."
+                placeholderTextColor={Colors.grey50}
                 value={message}
                 onChangeText={setMessage}
                 multiline
                 numberOfLines={6}
-                textAlignVertical="top"
               />
             </View>
 
-            <TouchableOpacity 
-              style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
+            <TouchableOpacity
+              style={{
+                paddingVertical: 16,
+                borderRadius: 14,
+                backgroundColor: submitting ? Colors.grey60 : Colors.primaryColor,
+                alignItems: 'center',
+                justifyContent: 'center',
+                shadowColor: Colors.primaryColor,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 6
+              }}
               onPress={handleSubmitMessage}
               disabled={submitting}
             >
               {submitting ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.submitButtonText}>Gửi câu hỏi</Text>
+                <Text text70 white style={{ fontWeight: 'bold' }}>Gửi câu hỏi</Text>
               )}
             </TouchableOpacity>
 
@@ -259,56 +386,90 @@ export default function HelpCenterScreen() {
         )}
 
         {activeTab === 'messages' && (
-          <ScrollView 
-            contentContainerStyle={styles.scrollContent}
+          <ScrollView
+            contentContainerStyle={{ paddingTop: 20, paddingHorizontal: 20, paddingBottom: 100 }}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#82b440']} />
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.primaryColor]} />
             }
           >
             {loading ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#82b440" />
+              <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 60 }}>
+                <ActivityIndicator size="large" color={Colors.primaryColor} />
               </View>
             ) : myMessages.length === 0 ? (
-              <View style={styles.emptyContainer}>
-                <Ionicons name="chatbubbles-outline" size={64} color="#ccc" />
-                <Text style={styles.emptyText}>Chưa có tin nhắn nào</Text>
-                <TouchableOpacity 
-                  style={styles.emptyButton}
+              <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 60 }}>
+                <View
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 50,
+                    backgroundColor: 'white',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 20
+                  }}
+                >
+                  <Ionicons name="chatbubbles-outline" size={50} color={Colors.grey60} />
+                </View>
+                <Text text60 textColor style={{ fontWeight: 'bold', marginBottom: 8 }}>Chưa có tin nhắn nào</Text>
+                <Text text80 grey50 style={{ marginBottom: 24 }}>Gửi câu hỏi để nhận hỗ trợ</Text>
+                <TouchableOpacity
+                  style={{
+                    paddingVertical: 14,
+                    paddingHorizontal: 32,
+                    borderRadius: 14,
+                    backgroundColor: Colors.primaryColor,
+                    shadowColor: Colors.primaryColor,
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 6,
+                    elevation: 4
+                  }}
                   onPress={() => setActiveTab('contact')}
                 >
-                  <Text style={styles.emptyButtonText}>Gửi câu hỏi ngay</Text>
+                  <Text text70 white style={{ fontWeight: 'bold' }}>Gửi câu hỏi ngay</Text>
                 </TouchableOpacity>
               </View>
             ) : (
               <>
                 {myMessages.map((msg) => (
-                  <TouchableOpacity
+                  <Card
                     key={msg.id}
-                    style={styles.messageCard}
+                    enableShadow
+                    elevation={2}
+                    padding-16
+                    marginB-12
+                    style={{ borderRadius: 16 }}
                     onPress={() => router.push(`/message-detail?id=${msg.id}`)}
                   >
-                    <View style={styles.messageHeader}>
-                      <Text style={styles.messageSubject} numberOfLines={1}>
+                    <View row centerV spread marginB-8>
+                      <Text text70 textColor flex style={{ fontWeight: 'bold', marginRight: 12 }} numberOfLines={1}>
                         {msg.subject}
                       </Text>
-                      <View style={[styles.statusBadge, { backgroundColor: getStatusColor(msg.status) }]}>
-                        <Text style={styles.statusText}>{getStatusText(msg.status)}</Text>
+                      <View
+                        style={{
+                          paddingHorizontal: 10,
+                          paddingVertical: 4,
+                          borderRadius: 8,
+                          backgroundColor: getStatusColor(msg.status)
+                        }}
+                      >
+                        <Text text90 white style={{ fontWeight: 'bold' }}>{getStatusText(msg.status)}</Text>
                       </View>
                     </View>
-                    <Text style={styles.messagePreview} numberOfLines={2}>
+                    <Text text80 grey40 marginB-10 numberOfLines={2}>
                       {msg.message}
                     </Text>
                     {msg.reply && (
-                      <View style={styles.replyIndicator}>
+                      <View row centerV marginB-8 style={{ gap: 6 }}>
                         <Ionicons name="checkmark-circle" size={16} color="#34C759" />
-                        <Text style={styles.replyText}>Đã có phản hồi</Text>
+                        <Text text90 style={{ color: '#34C759', fontWeight: '600' }}>Đã có phản hồi</Text>
                       </View>
                     )}
-                    <Text style={styles.messageDate}>
+                    <Text text90 grey50>
                       {new Date(msg.createdAt).toLocaleDateString('vi-VN')}
                     </Text>
-                  </TouchableOpacity>
+                  </Card>
                 ))}
               </>
             )}
@@ -316,20 +477,6 @@ export default function HelpCenterScreen() {
           </ScrollView>
         )}
       </View>
-
-      {activeTab === 'faq' && (
-        <View style={[styles.footerContainer, { backgroundColor: COLORS.LIGHT_GREEN }]}>
-          <View style={styles.footerInnerBar} />
-          <View style={styles.contactRow}>
-            <Text style={styles.contactUsText}>LIÊN HỆ</Text>
-            <View style={styles.callCenterBox}>
-              <Ionicons name="call-outline" size={20} color={COLORS.DARK_GREEN} />
-              <Text style={[styles.callCenterText, { color: COLORS.DARK_GREEN }]}>Call Center</Text>
-              <Text style={[styles.phoneNumberText, { color: COLORS.DARK_GREEN }]}>220510</Text>
-            </View>
-          </View>
-        </View>
-      )}
-    </SafeAreaView>
+    </View>
   );
 }

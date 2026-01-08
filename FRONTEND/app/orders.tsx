@@ -2,17 +2,17 @@ import { orderService } from '@/services';
 import { Order } from '@/types/api.types';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
   ScrollView,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, View } from 'react-native-ui-lib';
-import { styles } from '../styles/orders-styles';
+import { Text, View, Card, Colors } from 'react-native-ui-lib';
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -98,69 +98,137 @@ export default function OrdersPage() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#333" />
+    <View flex bg-grey80>
+      <Stack.Screen options={{ headerShown: false }} />
+      <StatusBar barStyle="dark-content" />
+
+      {/* Modern Header */}
+      <View
+        row
+        centerV
+        paddingH-20
+        paddingT-15
+        paddingB-18
+        bg-white
+        style={{
+          borderBottomWidth: 1.5,
+          borderBottomColor: Colors.grey70,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
+          elevation: 3
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 12,
+            backgroundColor: Colors.grey80,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 15
+          }}
+        >
+          <Ionicons name="arrow-back" size={24} color={Colors.textColor} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>My Orders</Text>
-        <View style={styles.placeholder} />
+        <Text text40 textColor style={{ fontWeight: 'bold' }}>My Orders</Text>
       </View>
 
       {/* Content */}
       {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#82b440" />
-          <Text style={styles.loadingText}>Loading orders...</Text>
+        <View flex center>
+          <ActivityIndicator size="large" color={Colors.primaryColor} />
+          <Text text70 grey40 marginT-15 style={{ fontWeight: '500' }}>Loading orders...</Text>
         </View>
       ) : orders.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Ionicons name="receipt-outline" size={80} color="#ccc" />
-          <Text style={styles.emptyText}>No orders yet</Text>
-          <Text style={styles.emptySubtext}>Start shopping to create your first order!</Text>
-          <TouchableOpacity 
-            style={styles.shopButton}
-            onPress={() => router.push('/home')}
+        <View flex center paddingH-40>
+          <View
+            width={120}
+            height={120}
+            center
+            br100
+            bg-grey80
+            marginB-25
           >
-            <Text style={styles.shopButtonText}>Go Shopping</Text>
+            <Ionicons name="receipt-outline" size={60} color={Colors.grey40} />
+          </View>
+          <Text text50 textColor center style={{ fontWeight: 'bold' }}>No orders yet</Text>
+          <Text text80 grey40 center marginT-12 style={{ lineHeight: 24 }}>
+            Start shopping to create your first order!
+          </Text>
+          <TouchableOpacity
+            onPress={() => router.push('/home')}
+            activeOpacity={0.7}
+            style={{
+              marginTop: 30,
+              paddingHorizontal: 32,
+              paddingVertical: 16,
+              backgroundColor: Colors.primaryColor,
+              borderRadius: 18,
+              shadowColor: Colors.primaryColor,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 6
+            }}
+          >
+            <Text text70 white style={{ fontWeight: 'bold' }}>Go Shopping</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingTop: 20, paddingHorizontal: 20, paddingBottom: 100 }}
           refreshControl={
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={handleRefresh}
-              colors={['#82b440']}
+              colors={[Colors.primaryColor]}
             />
           }
         >
           {orders.map((order) => (
-            <TouchableOpacity
+            <Card
               key={order.id}
-              style={styles.orderCard}
+              padding-18
+              marginB-16
+              enableShadow
               onPress={() => router.push(`/order-detail?id=${order.id}`)}
+              style={{ borderRadius: 18 }}
             >
               {/* Order Header */}
-              <View style={styles.orderHeader}>
-                <View style={styles.orderHeaderLeft}>
-                  <Ionicons name="receipt" size={20} color="#333" />
-                  <Text style={styles.orderId}>Order #{order.id.toString().slice(0, 8)}</Text>
+              <View row spread centerV marginB-14>
+                <View row centerV>
+                  <View
+                    width={36}
+                    height={36}
+                    center
+                    br100
+                    style={{ backgroundColor: Colors.grey80 }}
+                  >
+                    <Ionicons name="receipt" size={20} color={Colors.textColor} />
+                  </View>
+                  <Text text70 textColor marginL-12 style={{ fontWeight: 'bold' }}>
+                    Order #{order.id.toString().slice(0, 8)}
+                  </Text>
                 </View>
                 <View
-                  style={[
-                    styles.statusBadge,
-                    { backgroundColor: getStatusColor(order.status) + '20' },
-                  ]}
+                  paddingH-12
+                  paddingV-6
+                  style={{
+                    backgroundColor: getStatusColor(order.status) + '20',
+                    borderRadius: 12
+                  }}
                 >
                   <Text
-                    style={[
-                      styles.statusText,
-                      { color: getStatusColor(order.status) },
-                    ]}
+                    text90
+                    style={{
+                      color: getStatusColor(order.status),
+                      fontWeight: 'bold'
+                    }}
                   >
                     {getStatusText(order.status)}
                   </Text>
@@ -168,14 +236,14 @@ export default function OrdersPage() {
               </View>
 
               {/* Order Items Summary */}
-              <View style={styles.orderContent}>
-                <Text style={styles.orderItemsText}>
+              <View marginB-12>
+                <Text text80 grey40 style={{ fontWeight: '500' }}>
                   {order.items.length} item{order.items.length > 1 ? 's' : ''}
                 </Text>
                 {order.deliveryAddress && (
-                  <View style={styles.addressRow}>
-                    <Ionicons name="location-outline" size={16} color="#666" />
-                    <Text style={styles.addressText} numberOfLines={1}>
+                  <View row centerV marginT-8>
+                    <Ionicons name="location-outline" size={16} color={Colors.grey40} />
+                    <Text text80 grey40 marginL-8 flex numberOfLines={1}>
                       {order.deliveryAddress.address}
                     </Text>
                   </View>
@@ -183,17 +251,30 @@ export default function OrdersPage() {
               </View>
 
               {/* Order Footer */}
-              <View style={styles.orderFooter}>
+              <View
+                row
+                spread
+                centerV
+                paddingT-14
+                style={{
+                  borderTopWidth: 1,
+                  borderTopColor: Colors.grey80
+                }}
+              >
                 <View>
-                  <Text style={styles.totalLabel}>Total</Text>
-                  <Text style={styles.totalAmount}>{formatCurrency(order.total)} VNĐ</Text>
+                  <Text text90 grey40 style={{ fontWeight: '500' }}>Total</Text>
+                  <Text text60 primaryColor marginT-4 style={{ fontWeight: 'bold' }}>
+                    {formatCurrency(order.total)} VNĐ
+                  </Text>
                 </View>
-                <Text style={styles.orderDate}>{formatDate(order.createdAt)}</Text>
+                <Text text90 grey40 style={{ fontWeight: '500' }}>
+                  {formatDate(order.createdAt)}
+                </Text>
               </View>
-            </TouchableOpacity>
+            </Card>
           ))}
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 }

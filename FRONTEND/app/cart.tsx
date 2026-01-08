@@ -11,9 +11,10 @@ import {
   Image,
   RefreshControl,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, View } from 'react-native-ui-lib';
+import { Text, View, Card, Button, Colors, Spacings, Checkbox } from 'react-native-ui-lib';
 import BottomNavigator from '../components/bottom-navigator';
 import { styles } from '../styles/cart-styles';
 
@@ -35,7 +36,7 @@ export default function CartScreen() {
     try {
       setLoading(true);
       const data = await cartService.getCart();
-      
+
       const transformedData = data.map((item: any) => {
         const price = parseFloat(item.product.price) || 0;
         return {
@@ -44,12 +45,12 @@ export default function CartScreen() {
           totalPrice: price * item.quantity,
         };
       });
-      
+
       setCartItems(transformedData);
     } catch (error: any) {
       console.error('Error loading cart:', error);
       const message = error?.response?.data?.message || 'Failed to load cart';
-      
+
       if (!message.includes('Session expired')) {
         toast.show({
           type: 'error',
@@ -95,13 +96,13 @@ export default function CartScreen() {
     }
 
     setUpdatingItems(prev => new Set(prev).add(itemId));
-    
+
     try {
       await cartService.updateCartItem(itemId, newQuantity);
-      
-      setCartItems(prev => 
-        prev.map(item => 
-          item.id === itemId 
+
+      setCartItems(prev =>
+        prev.map(item =>
+          item.id === itemId
             ? { ...item, quantity: newQuantity, totalPrice: item.price * newQuantity }
             : item
         )
@@ -135,7 +136,7 @@ export default function CartScreen() {
             try {
               await cartService.removeFromCart(itemId);
               setCartItems(prev => prev.filter(item => item.id !== itemId));
-              
+
               toast.show({
                 type: 'success',
                 text1: 'Removed',
@@ -168,7 +169,7 @@ export default function CartScreen() {
             try {
               await cartService.clearCart();
               setCartItems([]);
-              
+
               toast.show({
                 type: 'success',
                 text1: 'Success',
@@ -197,7 +198,7 @@ export default function CartScreen() {
       });
       return;
     }
-    
+
     if (selectedItems.size === 0) {
       toast.show({
         type: 'error',
@@ -206,11 +207,11 @@ export default function CartScreen() {
       });
       return;
     }
-    
+
     const selected = cartItems.filter(item => selectedItems.has(item.id));
     router.push({
       pathname: '/checkout',
-      params: { 
+      params: {
         items: JSON.stringify(selected),
         fromCart: 'true'
       }
@@ -226,147 +227,317 @@ export default function CartScreen() {
     const isSelected = selectedItems.has(item.id);
 
     return (
-      <View style={styles.cartItem}>
-        <TouchableOpacity 
-          style={styles.checkbox}
-          onPress={() => toggleItemSelection(item.id)}
-        >
-          <Ionicons 
-            name={isSelected ? "checkbox" : "square-outline"} 
-            size={24} 
-            color={isSelected ? "#007AFF" : "#CCC"} 
-          />
-        </TouchableOpacity>
-        <Image 
-          source={{ uri: item.product.imageUrl || 'https://via.placeholder.com/80' }} 
-          style={styles.productImage}
-        />
-        
-        <View style={styles.productInfo}>
-          <Text style={styles.productName} numberOfLines={2}>
-            {item.product.name}
-          </Text>
-          <Text style={styles.productPrice}>
-            {formatCurrency(item.price)} VNĐ
-          </Text>
-          
-          {/* Quantity Controls */}
-          <View style={styles.quantityContainer}>
-            <TouchableOpacity
-              style={[styles.quantityButton, isUpdating && styles.quantityButtonDisabled]}
-              onPress={() => updateQuantity(item.id, item.quantity - 1)}
-              disabled={isUpdating}
-            >
-              <Ionicons name="remove" size={16} color={isUpdating ? '#CCC' : '#333'} />
-            </TouchableOpacity>
-            
-            <Text style={styles.quantityText}>{item.quantity}</Text>
-            
-            <TouchableOpacity
-              style={[styles.quantityButton, isUpdating && styles.quantityButtonDisabled]}
-              onPress={() => updateQuantity(item.id, item.quantity + 1)}
-              disabled={isUpdating}
-            >
-              <Ionicons name="add" size={16} color={isUpdating ? '#CCC' : '#333'} />
-            </TouchableOpacity>
+      <Card
+        marginH-20
+        marginB-15
+        padding-18
+        bg-white
+        style={{
+          borderRadius: 22,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.12,
+          shadowRadius: 10,
+          elevation: 5,
+          borderWidth: isSelected ? 2 : 1,
+          borderColor: isSelected ? Colors.primaryColor : Colors.grey70,
+        }}
+      >
+        <View row>
+          {/* Checkbox */}
+          <View center marginR-15>
+            <Checkbox
+              value={isSelected}
+              onValueChange={() => toggleItemSelection(item.id)}
+              color={Colors.primaryColor}
+              size={24}
+            />
+          </View>
+
+          {/* Product Image */}
+          <View
+            style={{
+              width: 90,
+              height: 90,
+              borderRadius: 18,
+              overflow: 'hidden',
+              backgroundColor: Colors.grey80
+            }}
+          >
+            <Image
+              source={{ uri: item.product.imageUrl || 'https://via.placeholder.com/90' }}
+              style={{ width: '100%', height: '100%' }}
+              resizeMode="cover"
+            />
+          </View>
+
+          {/* Product Info */}
+          <View flex marginL-15>
+            <Text text70 textColor numberOfLines={2} style={{ fontWeight: '700', lineHeight: 22 }}>
+              {item.product.name}
+            </Text>
+            <Text text80 primaryColor marginT-6 style={{ fontWeight: 'bold', fontSize: 16 }}>
+              {formatCurrency(item.price)} ₫
+            </Text>
+
+            {/* Quantity Controls */}
+            <View row centerV spread marginT-12>
+              <View
+                row
+                centerV
+                paddingH-10
+                paddingV-6
+                style={{
+                  backgroundColor: Colors.grey80,
+                  borderRadius: 25,
+                  borderWidth: 1.5,
+                  borderColor: Colors.grey60
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => updateQuantity(item.id, item.quantity - 1)}
+                  disabled={isUpdating}
+                  style={{ padding: 4 }}
+                >
+                  <Ionicons
+                    name="remove"
+                    size={18}
+                    color={isUpdating ? Colors.grey40 : Colors.textColor}
+                  />
+                </TouchableOpacity>
+
+                <Text text70 marginH-18 style={{ fontWeight: 'bold', minWidth: 20, textAlign: 'center' }}>
+                  {item.quantity}
+                </Text>
+
+                <TouchableOpacity
+                  onPress={() => updateQuantity(item.id, item.quantity + 1)}
+                  disabled={isUpdating}
+                  style={{ padding: 4 }}
+                >
+                  <Ionicons
+                    name="add"
+                    size={18}
+                    color={isUpdating ? Colors.grey40 : Colors.textColor}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {/* Delete Button */}
+              <TouchableOpacity
+                onPress={() => handleRemoveItem(item.id)}
+                disabled={isUpdating}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 12,
+                  backgroundColor: '#FFEBEE',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <Ionicons name="trash-outline" size={22} color={Colors.red30} />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-
-        <View style={styles.itemActions}>
-          <Text style={styles.totalPrice}>
-            {formatCurrency(item.totalPrice)} VNĐ
-          </Text>
-          <TouchableOpacity
-            style={styles.removeButton}
-            onPress={() => handleRemoveItem(item.id)}
-            disabled={isUpdating}
-          >
-            <Ionicons name="trash-outline" size={20} color="#FF3B30" />
-          </TouchableOpacity>
-        </View>
-      </View>
+      </Card>
     );
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <View style={styles.content}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color="#333" />
+      <View flex bg-white>
+        {/* Modern Header */}
+        <View
+          row
+          spread
+          centerV
+          paddingH-20
+          paddingV-18
+          bg-white
+          style={{
+            borderBottomWidth: 1.5,
+            borderBottomColor: Colors.grey70
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 12,
+              backgroundColor: Colors.grey80,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Ionicons name="arrow-back" size={24} color={Colors.textColor} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Cart</Text>
-          {cartItems.length > 0 && (
-            <TouchableOpacity onPress={handleClearCart}>
-              <Text style={styles.clearText}>Clear</Text>
+
+          <View center flex>
+            <Text text50 textColor style={{ fontWeight: 'bold' }}>Shopping Cart</Text>
+            {cartItems.length > 0 && (
+              <Text text90 grey40 marginT-2 style={{ fontWeight: '500' }}>
+                {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
+              </Text>
+            )}
+          </View>
+
+          {cartItems.length > 0 ? (
+            <TouchableOpacity
+              onPress={handleClearCart}
+              style={{
+                paddingHorizontal: 14,
+                paddingVertical: 8,
+                borderRadius: 10,
+                backgroundColor: '#FFEBEE'
+              }}
+            >
+              <Text text80 style={{ color: Colors.red30, fontWeight: '700' }}>Clear</Text>
             </TouchableOpacity>
+          ) : (
+            <View style={{ width: 60 }} />
           )}
-          {cartItems.length === 0 && <View style={{ width: 50 }} />}
         </View>
-        
-        {/* Select All */}
+
+        {/* Select All Section */}
         {cartItems.length > 0 && (
-          <View style={styles.selectAllContainer}>
-            <TouchableOpacity 
-              style={styles.selectAllButton}
+          <View
+            row
+            spread
+            centerV
+            paddingH-20
+            paddingV-15
+            bg-grey80
+            style={{ borderBottomWidth: 1, borderBottomColor: Colors.grey70 }}
+          >
+            <TouchableOpacity
+              row
+              centerV
               onPress={toggleSelectAll}
             >
-              <Ionicons 
-                name={selectedItems.size === cartItems.length ? "checkbox" : "square-outline"} 
-                size={24} 
-                color={selectedItems.size === cartItems.length ? "#007AFF" : "#CCC"} 
-              />
-              <Text style={styles.selectAllText}>Select All</Text>
+              <View
+                width={28}
+                height={28}
+                center
+                br100
+                style={{
+                  backgroundColor: selectedItems.size === cartItems.length ? Colors.primaryColor : Colors.white,
+                  borderWidth: 2,
+                  borderColor: selectedItems.size === cartItems.length ? Colors.primaryColor : Colors.grey50
+                }}
+              >
+                {selectedItems.size === cartItems.length && (
+                  <Ionicons name="checkmark" size={18} color={Colors.white} />
+                )}
+              </View>
+              <Text text70 textColor marginL-12 style={{ fontWeight: '600' }}>Select All</Text>
             </TouchableOpacity>
-            <Text style={styles.selectedCount}>
-              {selectedItems.size} / {cartItems.length} items
+
+            <Text text80 primaryColor style={{ fontWeight: '700' }}>
+              {selectedItems.size} / {cartItems.length} selected
             </Text>
           </View>
         )}
 
-        {/* Cart Items */}
+        {/* Cart Items List */}
         {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#007AFF" />
+          <View flex center>
+            <ActivityIndicator size="large" color={Colors.primaryColor} />
+            <Text text70 grey40 marginT-15 style={{ fontWeight: '500' }}>
+              Loading cart...
+            </Text>
           </View>
         ) : (
           <FlatList
             data={cartItems}
             renderItem={renderCartItem}
             keyExtractor={(item) => String(item.id)}
-            contentContainerStyle={styles.listContainer}
+            contentContainerStyle={{ paddingTop: 20, paddingBottom: 140 }}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[Colors.primaryColor]} />
             }
             ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <Ionicons name="cart-outline" size={80} color="#CCC" />
-                <Text style={styles.emptyText}>Your cart is empty</Text>
-                <Text style={styles.emptySubtext}>Add products to get started</Text>
-                <TouchableOpacity
-                  style={styles.shopButton}
-                  onPress={() => router.push('/home')}
+              <View flex center paddingT-80>
+                <View
+                  width={120}
+                  height={120}
+                  center
+                  br100
+                  bg-grey80
+                  marginB-25
                 >
-                  <Text style={styles.shopButtonText}>Start Shopping</Text>
-                </TouchableOpacity>
+                  <Ionicons name="cart-outline" size={60} color={Colors.grey40} />
+                </View>
+                <Text text50 textColor style={{ fontWeight: 'bold' }}>Your Cart is Empty</Text>
+                <Text text80 grey40 center marginT-12 marginH-40 style={{ lineHeight: 24 }}>
+                  Looks like you haven't added anything to your cart yet
+                </Text>
+                <Button
+                  label="Start Shopping"
+                  onPress={() => router.push('/home')}
+                  backgroundColor={Colors.primaryColor}
+                  marginT-30
+                  style={{ paddingHorizontal: 40, height: 54, borderRadius: 16 }}
+                  labelStyle={{ fontWeight: 'bold', fontSize: 15 }}
+                  enableShadow
+                />
               </View>
             }
           />
         )}
 
-        {/* Bottom Summary */}
+        {/* Modern Bottom Checkout Bar */}
         {cartItems.length > 0 && (
-          <View style={styles.bottomSummary}>
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Subtotal:</Text>
-              <Text style={styles.summaryValue}>{formatCurrency(subtotal)} VNĐ</Text>
+          <View
+            padding-22
+            bg-white
+            absB
+            left
+            right
+            style={{
+              borderTopLeftRadius: 32,
+              borderTopRightRadius: 32,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: -5 },
+              shadowOpacity: 0.12,
+              shadowRadius: 15,
+              elevation: 12,
+              paddingBottom: 28
+            }}
+          >
+            <View row spread centerV marginB-18>
+              <View>
+                <Text text80 grey40 style={{ fontWeight: '500' }}>Total Amount</Text>
+                <Text text40 primaryColor marginT-4 style={{ fontWeight: 'bold', letterSpacing: 0.3 }}>
+                  {formatCurrency(subtotal)} ₫
+                </Text>
+              </View>
+
+              <View
+                paddingH-16
+                paddingV-8
+                style={{
+                  backgroundColor: Colors.grey80,
+                  borderRadius: 12
+                }}
+              >
+                <Text text80 grey20 style={{ fontWeight: '600' }}>
+                  {selectedItems.size} {selectedItems.size === 1 ? 'item' : 'items'}
+                </Text>
+              </View>
             </View>
-            <TouchableOpacity style={styles.checkoutButton} onPress={goToCheckout}>
-              <Text style={styles.checkoutButtonText}>
-                Checkout • {formatCurrency(subtotal)} VNĐ
-              </Text>
-            </TouchableOpacity>
+
+            <Button
+              label="Proceed to Checkout"
+              backgroundColor={Colors.primaryColor}
+              onPress={goToCheckout}
+              disabled={selectedItems.size === 0}
+              style={{ height: 58, borderRadius: 18 }}
+              labelStyle={{ fontWeight: 'bold', fontSize: 16, letterSpacing: 0.5 }}
+              enableShadow
+            />
           </View>
         )}
 
