@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Category } from '../../category/entities/category.entity';
-import { User } from '../../user/entities/user.entity';
 
 @Entity('products')
 export class Product {
@@ -38,9 +37,6 @@ export class Product {
 
     @Column({ type: 'int', default: 0 })
     stock: number;
-
-    @ManyToMany(() => User, { cascade: false })
-    favoritedBy?: User[];
 
     @CreateDateColumn()
     createdAt: Date;
